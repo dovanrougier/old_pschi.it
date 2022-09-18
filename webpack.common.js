@@ -12,7 +12,7 @@ module.exports = {
     ],
     output: {
         filename: 'pschi.it.[contenthash].js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'build'),
         clean: true,
         publicPath: '/',
     },
