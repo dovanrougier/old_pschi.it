@@ -6,6 +6,10 @@ export class Canvas extends HtmlElement {
     constructor(parent, options) {
         super(parent, Canvas.elementTag, options);
     }
+
+    aspect(){
+        return this.element.width / this.element.height;
+    }
     
     static setAspect(canvas, aspect) {
         canvas.width = document.body.clientWidth;

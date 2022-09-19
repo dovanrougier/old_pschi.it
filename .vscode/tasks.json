@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "dev",
+			"script": "start",
 			"problemMatcher": [],
 			"label": "npm start",
 			"detail": "webpack serve --config webpack.dev.js",

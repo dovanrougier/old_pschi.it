@@ -1,14 +1,11 @@
-import { Matrix4 } from "../Math/Matrix4";
-import { Vector3 } from "../Math/Vector3";
+import { Matrix4 } from "../math/Matrix4";
+import { Vector3 } from "../math/Vector3";
 import { LookAtMatrix } from "./LookAtMatrix";
 
 export class Camera {
-    constructor(eye = Vector3.fromValues(0, 0, -5), center = Vector3.fromValues(0, 0, 0), up = Vector3.fromValues(0, 1, 0), fovY = 45, aspect = 16 / 9, near = 0.1, far = 1000) {
-        this.lookAtMatrix = Matrix4.identityMatrix();
-
+    constructor(eye, center, up, fovY, aspect, near, far) {
         this.setPerspective(fovY, aspect, near, far);
         this.setLookAt(eye, center, up);
-        this.setMatrix();
     }
 
     setPerspective(fovY, aspect, near, far) {
@@ -19,7 +16,7 @@ export class Camera {
         this.perspectiveMatrix = Matrix4.perspectiveMatrix(this.fovY, this.aspect, this.near, this.far);
     }
 
-    setLookAt() {
+    setLookAt(eye, center, up) {
         this.lookAtMatrix = new LookAtMatrix(eye, center, up);
         this.setMatrix();
 
@@ -28,7 +25,7 @@ export class Camera {
 
     setMatrix() {
         if (this.perspectiveMatrix && this.lookAtMatrix) {
-            this.matrix = new Matrix4(this.perspectiveMatrix).multiply(this.lookAtMatrix);
+            this.matrix = new Matrix4(this.perspectiveMatrix).multiply(this.lookAtMatrix).values;
         }
     }
 
@@ -50,7 +47,7 @@ export class Camera {
     }
 
     truck(distance) {
-        this.lookAtMatrix.translate(distance);
+        this.lookAtMatrix.truck(distance);
         this.setMatrix();
     }
 

@@ -58,7 +58,7 @@ export class WebGLProgram extends Program{
         return this;
     }
 
-    update(data){
+    updateBuffer(data){
         this.data = data;
         this.buffer.setData(this.gl, this.data, this.gl.STATIC_DRAW);
         

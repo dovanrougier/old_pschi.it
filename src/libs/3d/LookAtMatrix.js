@@ -3,6 +3,7 @@ import { Vector3 } from "../math/Vector3";
 
 export class LookAtMatrix extends Matrix4 {
     constructor(eye, center, up){
+        super();
         this.lookAt(eye, center, up);
     }
     
@@ -36,7 +37,7 @@ export class LookAtMatrix extends Matrix4 {
     }
 
     tilt(radians) {
-        const matrixRotation = Matrix4.rotationMatrix(radians, this.u.values[0], this.u.values[1], this.u.values[2]);
+        const matrixRotation = Matrix4.identityMatrix().rotate(radians, this.u.values[0], this.u.values[1], this.u.values[2]);
         this.up.transform(matrixRotation);
         this.n.transform(matrixRotation);
 
@@ -55,7 +56,7 @@ export class LookAtMatrix extends Matrix4 {
 
 
     pan(radians) {
-        const matrixRotation = Matrix4.rotationMatrix(radians, this.up.values[0], this.up.values[1], this.up.values[2]);
+        const matrixRotation = Matrix4.identityMatrix().rotate(radians, this.up.values[0], this.up.values[1], this.up.values[2]);
         this.u.transform(matrixRotation);
         this.n.transform(matrixRotation);
 
@@ -73,7 +74,7 @@ export class LookAtMatrix extends Matrix4 {
 
 
     cant(radians) {
-        const matrixRotation = Matrix4.rotationMatrix(radians, this.n.values[0], this.n.values[1], this.n.values[2]);
+        const matrixRotation = Matrix4.identityMatrix().rotate(radians, this.n.values[0], this.n.values[1], this.n.values[2]);
         this.u.transform(matrixRotation);
         this.up.transform(matrixRotation);
 

@@ -7,7 +7,7 @@ export class Matrix4 {
     }
 
     setTo(matrix) {
-        const values = matrix.values === Matrix4 ? matrix.values : matrix;
+        const values = matrix.constructor === Matrix4 ? matrix.values : matrix;
         this.values[0] = values[0];
         this.values[1] = values[1];
         this.values[2] = values[2];
@@ -58,6 +58,8 @@ export class Matrix4 {
         let len = Math.hypot(x, y, z);
 
         if (len == 0) {
+            console.log(radians,x,y,z);
+            alert(len)
             throw new Error(`Can't rotate matrix from [${x},${y},${z}].`);
         }
 

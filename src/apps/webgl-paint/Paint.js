@@ -188,8 +188,6 @@ export class Paint extends Div {
     }
 
     stop() {
-        this.program.delete();
-        this.program = null;
         this.state = null;
         this.context = null;
         this.container.remove();

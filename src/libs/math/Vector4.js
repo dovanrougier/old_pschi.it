@@ -2,9 +2,12 @@ import { Vector2 } from "./Vector2";
 import { Vector3 } from "./Vector3";
 
 export class Vector4 {
-    constructor(values) {
+    constructor(values, y, z, w) {
         this.values = new Float32Array(4);
-        if (values) {
+        if (typeof values !== 'undefined') {
+            if (Number.isFinite(y) && Number.isFinite(z) && Number.isFinite(w)) {
+                values = [values, y, z]
+            }
             this.setTo(values);
         }
     }
@@ -34,7 +37,7 @@ export class Vector4 {
         this.values[1] -= vector.values[1];
         this.values[2] -= vector.values[2];
         this.values[3] -= vector.values[3];
-        
+
         return this;
     }
 
@@ -43,7 +46,7 @@ export class Vector4 {
         this.values[1] *= vector.values[1];
         this.values[2] *= vector.values[2];
         this.values[3] *= vector.values[3];
-        
+
         return this;
     }
 
@@ -52,7 +55,7 @@ export class Vector4 {
         this.values[1] /= vector.values[1];
         this.values[2] /= vector.values[2];
         this.values[3] /= vector.values[3];
-        
+
         return this;
     }
 

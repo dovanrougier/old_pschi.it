@@ -52,4 +52,14 @@ export class HtmlElement {
             this.parent.appendChild(this.element);
         }
     }
+
+    remove() {
+        this.element.remove();
+    }
+
+    requestPointerLock() {
+        this.element.requestPointerLock = this.element.requestPointerLock ||
+            this.element.mozRequestPointerLock;
+        this.element.requestPointerLock();
+    }
 }

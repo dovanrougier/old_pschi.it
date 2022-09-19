@@ -2,9 +2,12 @@ import { Vector2 } from "./Vector2";
 import { Vector4 } from "./Vector4";
 
 export class Vector3 {
-    constructor(values) {
+    constructor(values, y, z) {
         this.values = new Float32Array(3);
-        if (values) {
+        if (typeof values !== 'undefined') {
+            if (Number.isFinite(y) && Number.isFinite(z)) {
+                values = [values, y, z]
+            }
             this.setTo(values);
         }
     }
@@ -61,7 +64,7 @@ export class Vector3 {
         this.values[0] = (matrix.values[0] * x + matrix.values[4] * y + matrix.values[8] * z + matrix.values[12]) / w;
         this.values[1] = (matrix.values[1] * x + matrix.values[5] * y + matrix.values[9] * z + matrix.values[13]) / w;
         this.values[2] = (matrix.values[2] * x + matrix.values[6] * y + matrix.values[10] * z + matrix.values[14]) / w;
-        
+
         return this;
     }
 
@@ -105,7 +108,7 @@ export class Vector3 {
         this.values[1] = this.values[1] * value;
         this.values[2] = this.values[2] * value;
 
-        return this.values;
+        return this;
     }
 
     toVector2() {

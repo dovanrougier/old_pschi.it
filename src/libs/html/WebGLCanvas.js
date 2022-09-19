@@ -14,4 +14,12 @@ export class WebGLCanvas extends Canvas{
         Canvas.setAspect(gl.canvas, aspect);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     }
+    
+
+    stop() {
+        this.program.delete();
+        this.program = null;
+
+        return this;
+    }
 }
