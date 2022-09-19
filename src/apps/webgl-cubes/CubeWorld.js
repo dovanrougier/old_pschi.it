@@ -1,5 +1,4 @@
 import { Div } from '../../libs/html/Div';
-import { Canvas } from '../../libs/html/Canvas';
 import { WebGLContext } from './WebGLContext';
 import { Camera } from '../../libs/3d/Camera';
 import { Cube } from '../../libs/3d/geometry/Cube';
