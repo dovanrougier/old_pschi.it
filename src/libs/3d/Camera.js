@@ -5,7 +5,7 @@ import { LookAtMatrix } from "./LookAtMatrix";
 export class Camera {
     constructor(eye, center, up, fovY, aspect, near, far) {
         this.setPerspective(fovY, aspect, near, far);
-        this.setLookAt(eye, center, up);
+        this.lookAt(eye, center, up);
     }
 
     setPerspective(fovY, aspect, near, far) {
@@ -16,8 +16,8 @@ export class Camera {
         this.perspectiveMatrix = Matrix4.perspectiveMatrix(this.fovY, this.aspect, this.near, this.far);
     }
 
-    setLookAt(eye, center, up) {
-        this.lookAtMatrix = new LookAtMatrix(eye, center, up);
+    lookAt(eye, center, up) {
+        this.lookAtMatrix = new LookAtMatrix(new Vector3(eye), new Vector3(center), new Vector3(up));
         this.setMatrix();
 
         return this;

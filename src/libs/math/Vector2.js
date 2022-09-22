@@ -1,3 +1,6 @@
+import { Matrix2 } from "./Matrix2";
+import { Matrix3 } from "./Matrix3";
+import { Matrix4 } from "./Matrix4";
 import { Vector3 } from "./Vector3";
 import { Vector4 } from "./Vector4";
 
@@ -13,37 +16,44 @@ export class Vector2 {
     }
 
     setTo(vector) {
-        const values = vector.values === [] ? vector.values : vector;
+        const values = vector.constructor === Vector2 ? vector.values : vector;
         this.values[0] = values[0];
         this.values[1] = values[1];
 
         return this;
     }
 
-    add(vector){
+    add(vector) {
         this.values[0] += vector.values[0];
         this.values[1] += vector.values[1];
 
         return this;
     }
 
-    substract(vector){
+    substract(vector) {
         this.values[0] -= vector.values[0];
         this.values[1] -= vector.values[1];
 
         return this;
     }
 
-    multiply(vector){
+    multiply(vector) {
         this.values[0] *= vector.values[0];
         this.values[1] *= vector.values[1];
 
         return this;
     }
 
-    divide(vector){
+    divide(vector) {
         this.values[0] /= vector.values[0];
         this.values[1] /= vector.values[1];
+
+        return this;
+    }
+
+    scale(value) {
+        this.values[0] = this.values[0] * value;
+        this.values[1] = this.values[1] * value;
 
         return this;
     }
@@ -61,6 +71,42 @@ export class Vector2 {
         this.values[1] = y * len;
 
         return this;
+    }
+
+    transform(matrix) {
+        if (matrix.constructor === Matrix2) {
+            const x = a[0],
+                y = a[1];
+            this.values[0] = matrix.values[0] * x + matrix.values[2] * y + matrix.values[4];
+            this.values[1] = matrix.values[1] * x + matrix.values[3] * y + matrix.values[5];
+        } else if (matrix.constructor === Matrix3) {
+            const x = a[0],
+                y = a[1];
+            this.values[0] = matrix.values[0] * x + matrix.values[3] * y + matrix.values[6];
+            this.values[1] = matrix.values[1] * x + matrix.values[4] * y + matrix.values[7];
+        } else if (matrix.constructor === Matrix4) {
+            const x = a[0],
+                y = a[1];
+            this.values[0] = matrix.values[0] * x + matrix.values[4] * y + matrix.values[12];
+            this.values[1] = matrix.values[1] * x + matrix.values[5] * y + matrix.values[13];
+        }
+        else {
+            throw new Error(`Cannot transform ${this} with ${matrix}`);
+        }
+        return this;
+    }
+
+    cross(vector) {
+        const z = this.values[0] * vector.values[1] - this.values[1] * vector.values[0];
+
+        this.values[0] = this.values[1] = 0;
+        this.values[2] = z;
+
+        return this;
+    }
+
+    dot(vector) {
+        return this.values[0] * vector.values[0] + this.values[1] * vector.values[1];
     }
 
     toVector3(z) {

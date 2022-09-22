@@ -5,6 +5,13 @@ export class Input extends HtmlElement {
 
     constructor(parent, options) {
         super(parent, Input.elementTag, options);
+        
+        if(!this.element.name){
+            this.element.name = options.id;
+        }
+        if(!this.element.title){
+            this.element.title = options.id;
+        }
         if(options.type){
             this.element.type = options.type;
         }

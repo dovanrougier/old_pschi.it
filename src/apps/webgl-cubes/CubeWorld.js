@@ -21,21 +21,21 @@ export class CubeWorld extends Div {
         this.movementX = 0;
         this.movementY = 0;
         this.camera = new Camera(
-            new Vector3(0,0,-5),
-            new Vector3(0,0,0),
-            new Vector3(0,1,0),
+            [0,0,-5],
+            [0,0,0],
+            [0,1,0],
             45,
             this.context.aspect(),
             0.1,
             1000
         );
         this.light = new Light(
-            new Vector3(0, 2, 0),
-            new Vector3(1, 1, 1),
-            new Vector3(0.2, 0.2, 0.2));
+            [0, 2, 0],
+            [1, 1, 1],
+            [0.2, 0.2, 0.2]);
         this.fog = new Fog(
-            new Vector3(0, 0, 0),
-            new Vector2(0, 8));
+            [0, 0, 0],
+            [0, 8]);
 
         this.cube = new Cube(
             0, 0, 0,
@@ -165,7 +165,7 @@ export class CubeWorld extends Div {
         this.updateRender({
             viewMatrix: this.camera.matrix,
         });
-        this.context.run();
+        this.context.draw();
         requestAnimationFrame(this.draw.bind(this));
     }
 

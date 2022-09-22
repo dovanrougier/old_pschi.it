@@ -65,11 +65,9 @@ export class WebGLProgram extends Program{
         return this;
     }
 
-    run(){
-        if(this.program){
-            this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-            this.gl.drawArrays(this.gl.POINTS, 0, this.data.length / 8);
-        }
+    draw(){
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        this.gl.drawArrays(this.gl.POINTS, 0, this.data.length / 8);
         
         return this;
     }

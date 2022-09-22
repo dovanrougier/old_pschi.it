@@ -24,6 +24,9 @@ export class HtmlElement {
             if (options.height) {
                 this.element.height = options.height;
             }
+            if (options.onclick) {
+                this.element.onclick = options.onclick;
+            }
             if (options.onmousemove) {
                 this.element.onmousemove = options.onmousemove;
             }

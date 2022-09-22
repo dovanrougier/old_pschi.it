@@ -42,8 +42,8 @@ export class Program {
         throw new Error(`${this.constructor.name} is missing ${this.init.name} implementation.`);
     }
 
-    run() {
-        throw new Error(`${this.constructor.name} is missing ${this.run.name} implementation.`);
+    draw() {
+        throw new Error(`${this.constructor.name} is missing ${this.draw.name} implementation.`);
     }
 
     use(){

@@ -141,11 +141,9 @@ export class WebGLProgram extends Program {
         this.uNormalMatrix.setValue(this.gl, normalMatrix);
     }
 
-    run() {
-        if (this.program) {
-            this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-            this.gl.drawArrays(this.gl.TRIANGLES, 0, this.drawCount);
-        }
+    draw() {
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.drawCount);
 
         return this;
     }

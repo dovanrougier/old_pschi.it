@@ -8,7 +8,6 @@ export class WebGLContext extends WebGLCanvas {
         this.element.style = "touch-action:none";
     }
 
-
     updateCanvas(data) {
         this.program.updateBuffer(data);
 
@@ -17,7 +16,7 @@ export class WebGLContext extends WebGLCanvas {
 
     run() {
         console.log('context.run');
-        this.program.run();
+        this.program.draw();
 
         return this;
     }

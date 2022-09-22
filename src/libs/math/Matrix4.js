@@ -1,3 +1,6 @@
+import { Matrix2 } from "./Matrix2";
+import { Matrix3 } from "./Matrix3";
+
 export class Matrix4 {
     constructor(values) {
         this.values = new Float32Array(16);
@@ -28,28 +31,115 @@ export class Matrix4 {
         return this;
     }
 
-    scale(x, y, z) {
-        this.values[0] = this.values[0] * x;
-        this.values[1] = this.values[1] * x;
-        this.values[2] = this.values[2] * x;
-        this.values[3] = this.values[3] * x;
-        this.values[4] = this.values[4] * y;
-        this.values[5] = this.values[5] * y;
-        this.values[6] = this.values[6] * y;
-        this.values[7] = this.values[7] * y;
-        this.values[8] = this.values[8] * z;
-        this.values[9] = this.values[9] * z;
-        this.values[10] = this.values[10] * z;
-        this.values[11] = this.values[11] * z;
+    add(matrix) {
+        this.values[0] += matrix.values[0];
+        this.values[1] += matrix.values[1];
+        this.values[2] += matrix.values[2];
+        this.values[3] += matrix.values[3];
+        this.values[4] += matrix.values[4];
+        this.values[5] += matrix.values[5];
+        this.values[6] += matrix.values[6];
+        this.values[7] += matrix.values[7];
+        this.values[8] += matrix.values[8];
+        this.values[9] += matrix.values[9];
+        this.values[10] += matrix.values[10];
+        this.values[11] += matrix.values[11];
+        this.values[12] += matrix.values[12];
+        this.values[13] += matrix.values[13];
+        this.values[14] += matrix.values[14];
+        this.values[15] += matrix.values[15];
 
         return this;
     }
 
-    translate(x, y, z) {
-        this.values[12] = this.values[0] * x + this.values[4] * y + this.values[8] * z + this.values[12];
-        this.values[13] = this.values[1] * x + this.values[5] * y + this.values[9] * z + this.values[13];
-        this.values[14] = this.values[2] * x + this.values[6] * y + this.values[10] * z + this.values[14];
-        this.values[15] = this.values[3] * x + this.values[7] * y + this.values[11] * z + this.values[15];
+    substract(matrix) {
+        this.values[0] -= matrix.values[0];
+        this.values[1] -= matrix.values[1];
+        this.values[2] -= matrix.values[2];
+        this.values[3] -= matrix.values[3];
+        this.values[4] -= matrix.values[4];
+        this.values[5] -= matrix.values[5];
+        this.values[6] -= matrix.values[6];
+        this.values[7] -= matrix.values[7];
+        this.values[8] -= matrix.values[8];
+        this.values[9] -= matrix.values[9];
+        this.values[10] -= matrix.values[10];
+        this.values[11] -= matrix.values[11];
+        this.values[12] -= matrix.values[12];
+        this.values[13] -= matrix.values[13];
+        this.values[14] -= matrix.values[14];
+        this.values[15] -= matrix.values[15];
+
+        return this;
+    }
+
+    multiply(matrix) {
+        const a00 = this.values[0],
+            a01 = this.values[1],
+            a02 = this.values[2],
+            a03 = this.values[3],
+            a10 = this.values[4],
+            a11 = this.values[5],
+            a12 = this.values[6],
+            a13 = this.values[7],
+            a20 = this.values[8],
+            a21 = this.values[9],
+            a22 = this.values[10],
+            a23 = this.values[11],
+            a30 = this.values[12],
+            a31 = this.values[13],
+            a32 = this.values[14],
+            a33 = this.values[15];
+        let b0 = matrix.values[0],
+            b1 = matrix.values[1],
+            b2 = matrix.values[2],
+            b3 = matrix.values[3];
+
+        this.values[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+        this.values[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+        this.values[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+        this.values[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+        b0 = matrix.values[4];
+        b1 = matrix.values[5];
+        b2 = matrix.values[6];
+        b3 = matrix.values[7];
+        this.values[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+        this.values[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+        this.values[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+        this.values[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+        b0 = matrix.values[8];
+        b1 = matrix.values[9];
+        b2 = matrix.values[10];
+        b3 = matrix.values[11];
+        this.values[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+        this.values[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+        this.values[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+        this.values[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+        b0 = matrix.values[12];
+        b1 = matrix.values[13];
+        b2 = matrix.values[14];
+        b3 = matrix.values[15];
+        this.values[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+        this.values[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+        this.values[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+        this.values[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+
+        return this;
+    }
+
+    scale(x, y, z) {
+        this.values[0] *= x;
+        this.values[1] *= x;
+        this.values[2] *= x;
+        this.values[3] *= x;
+        this.values[4] *= y;
+        this.values[5] *= y;
+        this.values[6] *= y;
+        this.values[7] *= y;
+        this.values[8] *= z;
+        this.values[9] *= z;
+        this.values[10] *= z;
+        this.values[11] *= z;
 
         return this;
     }
@@ -58,7 +148,7 @@ export class Matrix4 {
         let len = Math.hypot(x, y, z);
 
         if (len == 0) {
-            console.log(radians,x,y,z);
+            console.log(radians, x, y, z);
             alert(len)
             throw new Error(`Can't rotate matrix from [${x},${y},${z}].`);
         }
@@ -109,66 +199,23 @@ export class Matrix4 {
         return this;
     }
 
-    multiply(matrix) {
-        const a00 = this.values[0],
-            a01 = this.values[1],
-            a02 = this.values[2],
-            a03 = this.values[3];
-        const a10 = this.values[4],
-            a11 = this.values[5],
-            a12 = this.values[6],
-            a13 = this.values[7];
-        const a20 = this.values[8],
-            a21 = this.values[9],
-            a22 = this.values[10],
-            a23 = this.values[11];
-        const a30 = this.values[12],
-            a31 = this.values[13],
-            a32 = this.values[14],
-            a33 = this.values[15];
-        let b0 = matrix.values[0],
-            b1 = matrix.values[1],
-            b2 = matrix.values[2],
-            b3 = matrix.values[3];
-        this.values[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-        this.values[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-        this.values[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-        this.values[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-        b0 = matrix.values[4];
-        b1 = matrix.values[5];
-        b2 = matrix.values[6];
-        b3 = matrix.values[7];
-        this.values[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-        this.values[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-        this.values[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-        this.values[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-        b0 = matrix.values[8];
-        b1 = matrix.values[9];
-        b2 = matrix.values[10];
-        b3 = matrix.values[11];
-        this.values[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-        this.values[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-        this.values[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-        this.values[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-        b0 = matrix.values[12];
-        b1 = matrix.values[13];
-        b2 = matrix.values[14];
-        b3 = matrix.values[15];
-        this.values[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-        this.values[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-        this.values[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-        this.values[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+    translate(x, y, z) {
+        this.values[12] = this.values[0] * x + this.values[4] * y + this.values[8] * z + this.values[12];
+        this.values[13] = this.values[1] * x + this.values[5] * y + this.values[9] * z + this.values[13];
+        this.values[14] = this.values[2] * x + this.values[6] * y + this.values[10] * z + this.values[14];
+        this.values[15] = this.values[3] * x + this.values[7] * y + this.values[11] * z + this.values[15];
 
         return this;
     }
 
     transpose() {
-        var a01 = this.values[1],
+        const a01 = this.values[1],
             a02 = this.values[2],
-            a03 = this.values[3];
-        var a12 = this.values[6],
-            a13 = this.values[7];
-        var a23 = this.values[11];
+            a03 = this.values[3],
+            a12 = this.values[6],
+            a13 = this.values[7],
+            a23 = this.values[11];
+
         this.values[1] = this.values[4];
         this.values[2] = this.values[8];
         this.values[3] = this.values[12];
@@ -185,20 +232,20 @@ export class Matrix4 {
         return this;
     }
 
-    invertMatrix() {
+    determinant() {
         const a00 = this.values[0],
             a01 = this.values[1],
             a02 = this.values[2],
-            a03 = this.values[3];
-        const a10 = this.values[4],
+            a03 = this.values[3],
+            a10 = this.values[4],
             a11 = this.values[5],
             a12 = this.values[6],
-            a13 = this.values[7];
-        const a20 = this.values[8],
+            a13 = this.values[7],
+            a20 = this.values[8],
             a21 = this.values[9],
             a22 = this.values[10],
-            a23 = this.values[11];
-        const a30 = this.values[12],
+            a23 = this.values[11],
+            a30 = this.values[12],
             a31 = this.values[13],
             a32 = this.values[14],
             a33 = this.values[15];
@@ -213,7 +260,40 @@ export class Matrix4 {
         const b08 = a20 * a33 - a23 * a30;
         const b09 = a21 * a32 - a22 * a31;
         const b10 = a21 * a33 - a23 * a31;
-        const b11 = a22 * a33 - a23 * a32; // Calculate the determinant
+        const b11 = a22 * a33 - a23 * a32;
+
+        return b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+    }
+
+    invertMatrix() {
+        const a00 = this.values[0],
+            a01 = this.values[1],
+            a02 = this.values[2],
+            a03 = this.values[3],
+            a10 = this.values[4],
+            a11 = this.values[5],
+            a12 = this.values[6],
+            a13 = this.values[7],
+            a20 = this.values[8],
+            a21 = this.values[9],
+            a22 = this.values[10],
+            a23 = this.values[11],
+            a30 = this.values[12],
+            a31 = this.values[13],
+            a32 = this.values[14],
+            a33 = this.values[15];
+        const b00 = a00 * a11 - a01 * a10;
+        const b01 = a00 * a12 - a02 * a10;
+        const b02 = a00 * a13 - a03 * a10;
+        const b03 = a01 * a12 - a02 * a11;
+        const b04 = a01 * a13 - a03 * a11;
+        const b05 = a02 * a13 - a03 * a12;
+        const b06 = a20 * a31 - a21 * a30;
+        const b07 = a20 * a32 - a22 * a30;
+        const b08 = a20 * a33 - a23 * a30;
+        const b09 = a21 * a32 - a22 * a31;
+        const b10 = a21 * a33 - a23 * a31;
+        const b11 = a22 * a33 - a23 * a32;
 
         let det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
 
@@ -241,26 +321,32 @@ export class Matrix4 {
 
         return this;
     }
+    
+    toMatrix2(){
+        const result = new Matrix2();
 
-    transposeMatrix(matrix) {
-        this.values[0] = matrix.values[0];
-        this.values[1] = matrix.values[4];
-        this.values[2] = matrix.values[8];
-        this.values[3] = matrix.values[12];
-        this.values[4] = matrix.values[1];
-        this.values[5] = matrix.values[5];
-        this.values[6] = matrix.values[9];
-        this.values[7] = matrix.values[13];
-        this.values[8] = matrix.values[2];
-        this.values[9] = matrix.values[6];
-        this.values[10] = matrix.values[10];
-        this.values[11] = matrix.values[14];
-        this.values[12] = matrix.values[3];
-        this.values[13] = matrix.values[7];
-        this.values[14] = matrix.values[11];
-        this.values[15] = matrix.values[15];
+        result.values[0] = this.values[0];
+        result.values[1] = this.values[1];
+        result.values[2] = this.values[4];
+        result.values[3] = this.values[5];
 
-        return this;
+        return result;
+    }
+
+    toMatrix3(){
+        const result = new Matrix3();
+
+        result.values[0] = this.values[0];
+        result.values[1] = this.values[1];
+        result.values[2] = this.values[2];
+        result.values[3] = this.values[4];
+        result.values[4] = this.values[5];
+        result.values[5] = this.values[6];
+        result.values[6] = this.values[8];
+        result.values[7] = this.values[9];
+        result.values[8] = this.values[10];
+
+        return result
     }
 
     static identityMatrix() {

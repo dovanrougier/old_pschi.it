@@ -32,8 +32,8 @@ export class WebGLContext extends WebGLCanvas {
         }
     }
 
-    run() {
-        this.program.run();
+    draw() {
+        this.program.draw();
 
         return this;
     }
