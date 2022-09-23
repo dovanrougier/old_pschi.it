@@ -1,17 +1,16 @@
 import { State } from '../../libs/core/State';
-import { Div } from '../../libs/html/Div';
 import { Canvas } from '../../libs/html/Canvas';
 import { Slider } from '../../libs/html/Slider';
 import { Button } from '../../libs/html/Button';
 import { WebGLContext } from './WebGLContext';
+import { App } from '../../libs/core/App';
 
-export class Paint extends Div {
+export class Paint extends App {
     constructor(parent, options) {
         super(parent, options);
     }
 
     init() {
-        this.container = new Div(this);
         this.context = new WebGLContext(this.container, {
             aspect: 16 / 9,
         });
@@ -118,8 +117,8 @@ export class Paint extends Div {
         this.control.push(new Button(this.container, {
             id: 'previous',
             onclick: (e) => {
-                if (this.configuration.state.previous()) {
-                    updateRender();
+                if (this.state.previous()) {
+                    this.updateRender(new Float32Array(this.state.getData()));
                 }
             }
         }));
@@ -127,8 +126,8 @@ export class Paint extends Div {
         this.control.push(new Button(this.container, {
             id: 'next',
             onclick: (e) => {
-                if (this.configuration.state.next()) {
-                    updateRender();
+                if (this.state.next()) {
+                    this.updateRender(new Float32Array(this.state.getData()));
                 }
             }
         }));
@@ -158,7 +157,6 @@ export class Paint extends Div {
     }
 
     updateState(event) {
-        console.log(event)
         if (this.clicked && this.inCanvas) {
             this.configuration.position = Canvas.getMouseRelativePositon(event, this.context.element);
             this.state.push(
@@ -170,27 +168,20 @@ export class Paint extends Div {
                 this.configuration.blue,
                 this.configuration.alpha]);
 
-            this.updateRender();
+            this.updateRender(new Float32Array(this.state.getData()));
         }
 
         return this;
     }
 
-    updateRender() {
-        const data = new Float32Array(this.state.getData());
+    updateRender(data) {
         this.context.updateCanvas(data);
+
+        requestAnimationFrame(this.context.draw.bind(this.context));
     }
 
     start() {
-        this.init().updateRender();
-
-        return this;
-    }
-
-    stop() {
-        this.state = null;
-        this.context = null;
-        this.container.remove();
+        this.init().updateRender(new Float32Array(this.state.getData()));
 
         return this;
     }

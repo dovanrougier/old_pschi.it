@@ -1,21 +1,18 @@
-import { Div } from '../../libs/html/Div';
 import { WebGLContext } from './WebGlContext';
 import { Camera } from '../../libs/3d/Camera';
 import { Cube } from '../../libs/3d/geometry/Cube';
 import { Light } from '../../libs/3d/Light';
 import { Fog } from '../../libs/3d/Fog';
-import { Vector3 } from '../../libs/math/Vector3';
-import { Vector2 } from '../../libs/math/Vector2';
 import { Matrix4 } from '../../libs/math/Matrix4';
 import { Radian } from '../../libs/math/Radian';
+import { App } from '../../libs/core/App';
 
-export class CubeWorld extends Div {
+export class CubeWorld extends App {
     constructor(parent, options) {
         super(parent, options);
     }
 
     init() {
-        this.container = new Div(this);
         this.context = new WebGLContext(this.container);
         this.clicked = false;
         this.movementX = 0;
@@ -61,7 +58,6 @@ export class CubeWorld extends Div {
     initControl() {
         this.step = 0.01;
 
-        this.track = false;
         this.context.element.onpointerdown = e => {
             this.clicked = true;
             this.context.requestPointerLock();
@@ -167,14 +163,6 @@ export class CubeWorld extends Div {
         });
         this.context.draw();
         requestAnimationFrame(this.draw.bind(this));
-    }
-
-    stop() {
-        this.state = null;
-        this.context = null;
-        this.container.remove();
-
-        return this;
     }
 
     static generateRandomPosition(distance) {

@@ -6,11 +6,17 @@ export class WebGLContext extends WebGLCanvas {
         super(parent, canvasOptions, webglOptions);
         this.program = new WebGLProgram(this.gl);
         this.element.style = "touch-action:none";
+        
+        this.clearColor(0, 0, 0, 1);
+        this.enableDepthTest();
+
+        this.drawMode = this.gl.TRIANGLES;
+        this.first = 0;
     }
 
     updateCanvas(data) {
         if (data.drawCount) {
-            this.program.updateDrawCount(data.drawCount);
+            this.drawCount = data.drawCount;
         }
         if (data.buffer) {
             this.program.updateBuffer(data.buffer);
@@ -33,7 +39,9 @@ export class WebGLContext extends WebGLCanvas {
     }
 
     draw() {
-        this.program.draw();
+        this.clear();
+        
+        this.program.draw(this.drawMode, this.first, this.drawCount);
 
         return this;
     }

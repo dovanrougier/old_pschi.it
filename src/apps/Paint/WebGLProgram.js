@@ -43,7 +43,6 @@ export class WebGLProgram extends Program{
     init(){
         this.createShader();
         this.create(this.vertexShader, this.fragmentShader);
-        this.gl.clearColor(0,0,0,1);
 
         this.use();
         this.saveLocation();
@@ -61,13 +60,6 @@ export class WebGLProgram extends Program{
     updateBuffer(data){
         this.data = data;
         this.buffer.setData(this.gl, this.data, this.gl.STATIC_DRAW);
-        
-        return this;
-    }
-
-    draw(){
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        this.gl.drawArrays(this.gl.POINTS, 0, this.data.length / 8);
         
         return this;
     }

@@ -1,8 +1,8 @@
 export class Buffer {
     static binded = null;
     constructor(gl, type){
-        this.create(gl);
         this.type = type;
+        this.create(gl);
     }
 
     create(/** @type {WebGLRenderingContext} */gl){
@@ -29,10 +29,5 @@ export class Buffer {
     setSubData(/** @type {WebGLRenderingContext} */gl, offset, bufferData) {
         this.bind(gl);
         gl.bufferSubData(this.type, offset, bufferData);
-    }
-
-    static unbind(/** @type {WebGLRenderingContext} */gl){
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        Buffer.binded = null;
     }
 }

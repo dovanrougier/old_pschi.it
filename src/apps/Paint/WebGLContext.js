@@ -6,17 +6,20 @@ export class WebGLContext extends WebGLCanvas {
         super(parent, canvasOptions, webglOptions);
         this.program = new WebGLProgram(this.gl);
         this.element.style = "touch-action:none";
+
+        this.clearColor(0, 0, 0, 1);
+        this.drawMode = this.gl.POINTS;
+        this.first = 0;
     }
 
     updateCanvas(data) {
         this.program.updateBuffer(data);
-
-        requestAnimationFrame(this.run.bind(this));
+        this.drawCount = data.length / 8;
     }
 
-    run() {
-        console.log('context.run');
-        this.program.draw();
+    draw() {
+        this.clear();
+        this.program.draw(this.drawMode, this.first, this.drawCount);
 
         return this;
     }

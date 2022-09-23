@@ -79,8 +79,6 @@ export class WebGLProgram extends Program {
     init() {
         this.createShader();
         this.create(this.vertexShader, this.fragmentShader);
-        this.gl.clearColor(0, 0, 0, 1);
-        this.gl.enable(this.gl.DEPTH_TEST);
 
         this.use();
         this.saveLocation();
@@ -99,10 +97,6 @@ export class WebGLProgram extends Program {
         this.buffer.setData(this.gl, this.data, this.gl.STATIC_DRAW);
 
         return this;
-    }
-
-    updateDrawCount(drawCount) {
-        this.drawCount = drawCount;
     }
 
     updatedClick(value) {
@@ -139,12 +133,5 @@ export class WebGLProgram extends Program {
 
         const normalMatrix = new Matrix4(matrix).invertMatrix().transpose().values;
         this.uNormalMatrix.setValue(this.gl, normalMatrix);
-    }
-
-    draw() {
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.drawCount);
-
-        return this;
     }
 }
