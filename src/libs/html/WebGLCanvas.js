@@ -7,7 +7,6 @@ export class WebGLCanvas extends Canvas {
         this.gl = this.element.getContext('webgl', contextOptions) || this.element.getContext('experimental-webgl', contextOptions);
 
         WebGLCanvas.setAspect(this.gl, canvasOptions?.aspect);
-        window.onresize = (e) => { WebGLCanvas.setAspect(this.gl, canvasOptions?.aspect); };
     }
 
     static setAspect(gl, aspect) {

@@ -3,29 +3,48 @@ import { Rectangle } from "./Rectangle";
 export class Tile extends Rectangle {
     constructor(x, y, width, height, u, v, tileWidth, tileHeight) {
         super(x, y, width, height);
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
         this.setUV(u, v);
-        this.setTileDimension(tileWidth, tileHeight);
-    }
-
-    setUV(u, v) {
-        this.u = u;
-        this.v = v;
     }
 
     setTileDimension(tileWidth, tileHeight) {
-        this.tileWidth = tileWidth;
-        this.tileHeight = tileHeight;
+        if (this.tileWidth != tileWidth || this.tileHeight != tileHeight) {
+            this.tileWidth = tileWidth;
+            this.tileHeight = tileHeight;
+
+            this.textureBuffer = Tile.getTextureBuffer(this.u, this.v, this.tileWidth, this.tileHeight);
+            this.bufferData = Tile.getBufferData(this.vertexBuffer, this.textureBuffer);
+
+            return true;
+        }
+        return false;
     }
 
-    getTextureCoordinate() {
-        return Tile.getTextureCoordinate(this.u, this.v, this.tileWidth, this.tileHeight);
+    setUV(u, v) {
+        if (this.u != u || this.v != v) {
+            this.u = u;
+            this.v = v;
+
+            this.textureBuffer = Tile.getTextureBuffer(this.u, this.v, this.tileWidth, this.tileHeight);
+            this.bufferData = Tile.getBufferData(this.vertexBuffer, this.textureBuffer);
+
+            return true;
+        }
+        return false;
     }
 
-    getData() {
-        return Tile.getData(this.x, this.y, this.width, this.height, this.u, this.v, this.tileWidth, this.tileHeight);
+    getTextureBuffer() {
+        return this.textureBuffer;
     }
 
-    static getTextureCoordinate(u, v, width, height) {
+    getBufferData() {
+        return this.bufferData;
+    }
+
+    static getTextureBuffer(u, v, width, height) {
+        u *= width;
+        v *= height;
         const uw = u + width,
             vh = v + height;
 
@@ -40,23 +59,15 @@ export class Tile extends Rectangle {
         ];
     }
 
-    static getData(x, y, width, height, u, v, tileWidth, tileHeight) {
-        //center the origin
-        x = x - width / 2;
-        y = y - height / 2;
-        const xw = x + width,
-            yh = y + height,
-            uw = u + tileWidth,
-            vh = v + tileHeight;
-
+    static getBufferData(vertexBuffer, textureBuffer) {
         return [
-            x, y, uw, vh,
-            x, yh, uw, v,
-            xw, yh, u, v,
+            vertexBuffer[0], vertexBuffer[1], textureBuffer[0], textureBuffer[1],
+            vertexBuffer[2], vertexBuffer[3], textureBuffer[2], textureBuffer[3],
+            vertexBuffer[4], vertexBuffer[5], textureBuffer[4], textureBuffer[5],
 
-            xw, yh, u, v,
-            xw, y, u, vh,
-            x, y, uw, vh
+            vertexBuffer[6], vertexBuffer[7], textureBuffer[6], textureBuffer[7],
+            vertexBuffer[8], vertexBuffer[9], textureBuffer[8], textureBuffer[9],
+            vertexBuffer[10], vertexBuffer[11], textureBuffer[10], textureBuffer[11],
         ];
     }
 }

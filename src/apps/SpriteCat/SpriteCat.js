@@ -4,7 +4,7 @@ import { Img } from '../../libs/html/Img';
 
 import { Cat } from './Cat';
 import { Camera } from '../../libs/3d/Camera';
-import { Matrix4 } from '../../libs/math/Matrix4';
+import { WebGLCanvas } from '../../libs/html/WebGLCanvas';
 
 export class SpirteCat extends App {
     constructor(parent, options) {
@@ -13,6 +13,10 @@ export class SpirteCat extends App {
 
     init() {
         this.context = new WebGLContext(this.container, null, { alpha: false });
+        window.onresize = (e) => { 
+            WebGLCanvas.setAspect(this.context.gl); 
+            this.camera.setPerspective(45,this.context.getAspect(),0.1,1000);
+        };
 
         this.max = 100;
         this.min = -this.max;
@@ -34,16 +38,14 @@ export class SpirteCat extends App {
         this.imgLoader = new Img(null, {
             src: Cat.texture.src,
             onload: () => {
+                this.cat.walk();
                 this.updateRender({
-                    buffer: this.cat.idleRight(),
+                    buffer: this.cat.getBufferData(),
                     vertexMatrix: this.cat.getMatrix(),
                     viewMatrix: this.camera.getMatrix(),
                     texture: this.imgLoader.element
                 });
                 requestAnimationFrame(this.draw.bind(this));
-                // this.imgLoader.flipY(()=>{
-                //     console.log('flipped');
-                // });
             }
         });
 
@@ -118,24 +120,33 @@ export class SpirteCat extends App {
     }
 
     draw(now) {
-        if (this.clicked) {
-            const data = {
-                vertexMatrix: this.cat.getMatrix(),
-            }
-            const buffer = this.cat.updateMovement(this.movementX * this.step, -this.movementY * this.step);
-            if (buffer) {
-                data.buffer = buffer;
-            }
-            this.updateRender(data);
+        const data = {};
+        this.updateCat(data);
+        if(this.camera.hasMoved){
+            console.log('update camera');
+            data.viewMatrix = this.camera.getMatrix();
         }
-        this.context.draw();
+        this.updateRender(data);
+
         requestAnimationFrame(this.draw.bind(this));
     }
 
+    updateCat(data) {
+        if (this.clicked) {
+            this.cat.translate(this.movementX * this.step, -this.movementY * this.step);
+            data.vertexMatrix = this.cat.getMatrix();
+
+        }
+        if (this.cat.walk(this.movementX, -this.movementY)) {
+            data.buffer = this.cat.getBufferData();
+        }
+        return data;
+    }
+
     updateRender(data) {
-        console.log(data.buffer);
         this.context.updateCanvas(data);
 
+        this.context.draw();
         return this;
     }
 

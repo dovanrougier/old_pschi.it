@@ -15,25 +15,30 @@ export class Sprite extends Tile {
 
     play(animation) {
         if (this.currentAnimation != animation) {
-            console.log(animation);
             this.setAnimation(animation);
         }
         return this.nextTile();
     }
 
     previousTile() {
-        this.animationTile = --this.animationTile < 0 ? this.currentAnimation.length - 1 : this.animationTile;
-        const uv = this.currentAnimation[this.animationTile];
-        this.setUV(uv[0], uv[1]);
+        if(!this.frameCount || ++this.frameCount < this.currentAnimation[this.animationTile][3]){
+            this.animationTile = ++this.animationTile >= this.currentAnimation.length ? 0 : this.animationTile;
+            const animationFrame = this.currentAnimation[this.animationTile];
+            this.frameCount = 0;
+            return this.setUV(animationFrame[0], animationFrame[1]);
+        }
 
-        return this.getData();
+        return false;
     }
 
     nextTile() {
-        this.animationTile = ++this.animationTile >= this.currentAnimation.length ? 0 : this.animationTile;
-        const uv = this.currentAnimation[this.animationTile];
-        this.setUV(uv[0], uv[1]);
+        if(!this.frameCount || --this.frameCount <= 0){
+            this.animationTile = ++this.animationTile >= this.currentAnimation.length ? 0 : this.animationTile;
+            const animationFrame = this.currentAnimation[this.animationTile];
+            this.frameCount = animationFrame[2];
+            return this.setUV(animationFrame[0], animationFrame[1]);
+        }
 
-        return this.getData();
+        return false;
     }
 }

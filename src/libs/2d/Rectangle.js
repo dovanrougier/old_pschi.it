@@ -2,9 +2,12 @@ import { Matrix4 } from "../math/Matrix4";
 
 export class Rectangle {
     constructor(x, y, width, height, color) {
-        this.setDimensions(width, height);
-        this.setPosition(x, y);
-        this.setColor(color);
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.color = color;
+        this.vertexBuffer = Rectangle.getVertexBuffer(this.x, this.y, this.width, this.height);
         this.matrix = Matrix4.identityMatrix();
     }
 
@@ -13,19 +16,32 @@ export class Rectangle {
     }
 
     setPosition(x, y) {
-        this.x = x;
-        this.y = y;
+        if (x != this.x || y != this.y) {
+            this.x = x;
+            this.y = y;
+            this.vertexBuffer = Rectangle.getVertexBuffer(this.x, this.y, this.width, this.height);
+
+            return true;
+        }
+        return false;
     }
 
     setDimensions(width, height) {
-        this.width = width;
-        this.height = height;
+        if (width != this.width || height != this.height) {
+            this.width = width;
+            this.height = height;
+            this.vertexBuffer = Rectangle.getVertexBuffer(this.x, this.y, this.width, this.height);
+
+            return true;
+        }
+        return false;
     }
 
-    getVertex() {
-        return Rectangle.getVertex(this.x, this.y, this.width, this.height);
+    getVertexBuffer() {
+        return this.vertexBuffer;
     }
-    static getVertex(x, y, width, height) {
+
+    static getVertexBuffer(x, y, width, height) {
         //center the origin
         x = x - width / 2;
         y = y - height / 2;

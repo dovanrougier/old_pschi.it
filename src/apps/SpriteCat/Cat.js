@@ -6,7 +6,7 @@ export class Cat extends Sprite {
         super(x, y, Cat.texture.tileWidth, Cat.texture.tileHeight, 0, 0, Cat.texture.tileWidth / Cat.texture.width, Cat.texture.tileHeight / Cat.texture.height);
         this.setVariant(variant);
         this.refreshRate = 8;
-        this.tileCounter = 0;
+        this.idle = Cat.animations.idle.right;
     }
 
     static texture = {
@@ -18,14 +18,14 @@ export class Cat extends Sprite {
     };
     static animations = {
         walk: {
-            left: [[2, 3], [0, 3], [1, 3]],
-            right: [[2, 0], [0, 0], [1, 0]],
-            up: [[2, 1], [0, 1], [1, 1]],
-            down: [[2, 2], [0, 2], [1, 2]],
+            right: [[2, 3, 5], [0, 3, 5], [1, 3, 5]],
+            left: [[2, 0, 5], [0, 0, 5], [1, 0, 5]],
+            up: [[2, 1, 5], [0, 1, 5], [1, 1, 5]],
+            down: [[2, 2, 5], [0, 2, 5], [1, 2, 5]],
         },
         idle: {
-            left: [[1, 3]],
-            right: [[1, 0]],
+            right: [[1, 3]],
+            left: [[1, 0]],
             up: [[1, 1]],
             down: [[1, 2]],
         },
@@ -33,9 +33,7 @@ export class Cat extends Sprite {
             left: [[3, 3]],
             right: [[3, 0]],
         },
-        action: {
-            left: [[0, 4], [1, 4], [2, 4], [3, 4]],
-        },
+        action: [[0, 4], [1, 4], [2, 4], [3, 4]],
     };
 
     setVariant(variant) {
@@ -46,49 +44,25 @@ export class Cat extends Sprite {
         this.offset = offset;
     }
 
-    idleLeft() {
-        return this.play(Cat.animations.idle.left);
-    }
-
-    idleRight() {
-        return this.play(Cat.animations.idle.right);
-    }
-
-    idleUp() {
-        return this.play(Cat.animations.idle.up);
-    }
-
-    idleDown() {
-        return this.play(Cat.animations.idle.down);
-    }
-
-    updateMovement(x, y) {
-        this.translate(x, y, 0);
-        this.walk(x, y);
-    }
-
     walk(x, y) {
         let animation;
         if (Math.abs(x) > Math.abs(y)) {
             if (x > 0) {
+                this.idle = Cat.animations.idle.right;
                 animation = Cat.animations.walk.right;
             } else {
+                this.idle = Cat.animations.idle.left;
                 animation = Cat.animations.walk.left;
             }
         } else if (Math.abs(y) > Math.abs(x)) {
             if (y > 0) {
+                this.idle = Cat.animations.idle.up;
                 animation = Cat.animations.walk.up;
             } else {
+                this.idle = Cat.animations.idle.down;
                 animation = Cat.animations.walk.down;
             }
         }
-        if(animation){
-            console.log(this.tileCounter);
-            if (this.tileCounter++ % this.refreshRate == 0) {
-                this.tileCounter = 0;
-                return this.play(animation);
-            }
-            return null;
-        }
+        return this.play(animation ?? this.idle);
     }
 }
