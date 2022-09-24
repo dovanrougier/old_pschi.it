@@ -50,7 +50,6 @@ export class WebGLProgram extends Program {
 
         this.buffer = new Buffer(this.gl, this.gl.ARRAY_BUFFER);
         this.texture = new Texture(this.gl, this.gl.TEXTURE_2D);
-        //Texture.setFlipY(this.gl, 1);
 
         this.aVertexPosition.enableBuffer(this.gl, this.buffer, 2, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, 0);
         this.aTexCoord.enableBuffer(this.gl, this.buffer, 2, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, Float32Array.BYTES_PER_ELEMENT * 2);

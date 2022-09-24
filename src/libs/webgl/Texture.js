@@ -47,6 +47,7 @@ export class Texture {
 
     static setFlipY(/** @type {WebGLRenderingContext} */gl, value) {
         if(Texture.flipY != value){
+            console.log(value);
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, value);
             Texture.flipY = value;
         }

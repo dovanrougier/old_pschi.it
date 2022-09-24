@@ -12,9 +12,9 @@ export class SpirteCat extends App {
     }
 
     init() {
-        this.context = new WebGLContext(this.container, null, { alpha: true });
+        this.context = new WebGLContext(this.container, null, { alpha: false });
 
-        this.max = 50;
+        this.max = 100;
         this.min = -this.max;
         this.then = 0;
         this.clicked = false;
@@ -23,7 +23,7 @@ export class SpirteCat extends App {
         this.cat = new Cat(0, 0);
 
         this.camera = new Camera(
-            [0, 0, -512],
+            [0, 0, 512],
             [0, 0, 0],
             [0, 1, 0],
             45,
@@ -34,15 +34,16 @@ export class SpirteCat extends App {
         this.imgLoader = new Img(null, {
             src: Cat.texture.src,
             onload: () => {
-                const buffer = this.cat.idleRight();
-
                 this.updateRender({
-                    buffer: buffer,
+                    buffer: this.cat.idleRight(),
                     vertexMatrix: this.cat.getMatrix(),
                     viewMatrix: this.camera.getMatrix(),
                     texture: this.imgLoader.element
                 });
                 requestAnimationFrame(this.draw.bind(this));
+                // this.imgLoader.flipY(()=>{
+                //     console.log('flipped');
+                // });
             }
         });
 
@@ -52,14 +53,14 @@ export class SpirteCat extends App {
     }
 
     updateMovement(e) {
-        this.movementX -= e.movementX;
+        this.movementX += e.movementX;
         this.movementY += e.movementY;
         this.movementX = Math.max(this.min, Math.min(this.movementX, this.max));
         this.movementY = Math.max(this.min, Math.min(this.movementY, this.max));
     }
 
     initControl() {
-        this.step = 0.001;
+        this.step = 0.01;
         this.context.element.onpointerdown = e => {
             this.clicked = true;
             this.context.requestPointerLock();
@@ -84,12 +85,12 @@ export class SpirteCat extends App {
                 case 'a':
                 case 'KeyA':
                 case 'ArrowLeft':
-                    this.movementX = this.max;
+                    this.movementX = -this.max;
                     break;
                 case 'd':
                 case 'KeyD':
                 case 'ArrowRight':
-                    this.movementX = -this.max;
+                    this.movementX = this.max;
                     break;
                 case 'w':
                 case 'KeyW':
@@ -121,7 +122,7 @@ export class SpirteCat extends App {
             const data = {
                 vertexMatrix: this.cat.getMatrix(),
             }
-            const buffer = this.cat.walk(this.movementX * this.step, -this.movementY * this.step);
+            const buffer = this.cat.updateMovement(this.movementX * this.step, -this.movementY * this.step);
             if (buffer) {
                 data.buffer = buffer;
             }
@@ -132,6 +133,7 @@ export class SpirteCat extends App {
     }
 
     updateRender(data) {
+        console.log(data.buffer);
         this.context.updateCanvas(data);
 
         return this;
@@ -142,8 +144,4 @@ export class SpirteCat extends App {
 
         return this;
     }
-}
-
-function hello(){
-    console.log('helloWorld');
 }

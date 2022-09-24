@@ -25,7 +25,7 @@ function setApp(appName) {
     return app;
 }
 
-var app = window.location.pathname.replace('/','');
+var app = window.location.pathname.replace('/', '');
 document.setApp = setApp;
 
 document.documentElement.style.height = '100%';

@@ -3,11 +3,12 @@ import textureSrc from './cat.png';
 
 export class Cat extends Sprite {
     constructor(x, y, variant) {
-        super(x, y, Cat.texture.tileWidth, Cat.texture.tileHeight, 0, 0);
+        super(x, y, Cat.texture.tileWidth, Cat.texture.tileHeight, 0, 0, Cat.texture.tileWidth / Cat.texture.width, Cat.texture.tileHeight / Cat.texture.height);
         this.setVariant(variant);
         this.refreshRate = 8;
+        this.tileCounter = 0;
     }
-    
+
     static texture = {
         src: textureSrc,
         width: 512,
@@ -17,23 +18,23 @@ export class Cat extends Sprite {
     };
     static animations = {
         walk: {
-            left: [[64, 96], [0, 96], [32, 96]],
-            right: [[64, 0], [0, 0], [32, 0]],
-            up: [[64, 32], [0, 32], [32, 32]],
-            down: [[64, 64], [0, 64], [32, 64]],
+            left: [[2, 3], [0, 3], [1, 3]],
+            right: [[2, 0], [0, 0], [1, 0]],
+            up: [[2, 1], [0, 1], [1, 1]],
+            down: [[2, 2], [0, 2], [1, 2]],
         },
         idle: {
-            down: [[32, 96]],
-            right: [[32, 0]],
-            up: [[32, 32]],
-            down: [[32, 64]],
+            left: [[1, 3]],
+            right: [[1, 0]],
+            up: [[1, 1]],
+            down: [[1, 2]],
         },
         sleep: {
-            left: [[96, 96]],
-            right: [[96, 0]],
+            left: [[3, 3]],
+            right: [[3, 0]],
         },
         action: {
-            left: [[0, 160], [32, 160], [64, 160], [96, 160]],
+            left: [[0, 4], [1, 4], [2, 4], [3, 4]],
         },
     };
 
@@ -61,31 +62,33 @@ export class Cat extends Sprite {
         return this.play(Cat.animations.idle.down);
     }
 
+    updateMovement(x, y) {
+        this.translate(x, y, 0);
+        this.walk(x, y);
+    }
+
     walk(x, y) {
-        if (x == 0 && y == 0) {
-            return;
-        }
+        let animation;
         if (Math.abs(x) > Math.abs(y)) {
             if (x > 0) {
-                this.play(Cat.animations.walk.right);
+                animation = Cat.animations.walk.right;
             } else {
-                this.play(Cat.animations.walk.left);
+                animation = Cat.animations.walk.left;
             }
         } else if (Math.abs(y) > Math.abs(x)) {
             if (y > 0) {
-                this.play(Cat.animations.walk.up);
+                animation = Cat.animations.walk.up;
             } else {
-                this.play(Cat.animations.walk.down);
+                animation = Cat.animations.walk.down;
             }
         }
-        this.translate(x, y, 0);
-        if (this.tileCounter++ % this.refreshRate == 0) {
-            return this.nextFrame();
+        if(animation){
+            console.log(this.tileCounter);
+            if (this.tileCounter++ % this.refreshRate == 0) {
+                this.tileCounter = 0;
+                return this.play(animation);
+            }
+            return null;
         }
-        return null;
-    }
-
-    render() {
-        return this.getTile();
     }
 }

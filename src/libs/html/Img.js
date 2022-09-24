@@ -64,6 +64,19 @@ export class Img extends HtmlElement {
         return result;
     }
 
+    flipY(onload){
+        const canvas = new Canvas2d();
+        canvas.context.translate(this.element.width, 0);
+        canvas.context.scale(-1,1);
+        canvas.context.drawImage(this.element, 0, 0, this.element.width, this.element.height);
+
+        var img = canvas.element.toDataURL("image/png");
+        this.element.onload = onload;
+        this.element.src = img;
+        
+        return this;
+    }
+
 
     static loadImage(src, onload) {
         const img = new Img();

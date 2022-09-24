@@ -1,11 +1,10 @@
 import { Matrix4 } from "../math/Matrix4";
 
 export class Rectangle {
-    constructor(x, y, width, height, color, u, v) {
-        this.setPosition(x, y);
+    constructor(x, y, width, height, color) {
         this.setDimensions(width, height);
+        this.setPosition(x, y);
         this.setColor(color);
-        this.setUV(u, v);
         this.matrix = Matrix4.identityMatrix();
     }
 
@@ -23,19 +22,13 @@ export class Rectangle {
         this.height = height;
     }
 
-    setUV(u, v) {
-        this.u = u;
-        this.v = v;
-    }
-
     getVertex() {
         return Rectangle.getVertex(this.x, this.y, this.width, this.height);
     }
-    getTextureCoordinate() {
-        return Rectangle.getTextureCoordinate(this.u, this.v, this.width, this.height);
-    }
-
     static getVertex(x, y, width, height) {
+        //center the origin
+        x = x - width / 2;
+        y = y - height / 2;
         const xw = x + width,
             yh = y + height;
 
@@ -47,21 +40,6 @@ export class Rectangle {
             xw, yh,
             xw, y,
             x, y];
-    }
-
-    static getTextureCoordinate(u, v, width, height) {
-        const uw = u + width,
-            vh = v + height;
-
-        return [
-            u, v,
-            u, vh,
-            uw, vh,
-
-            uw, vh,
-            uw, v,
-            u, v,
-        ];
     }
 
     translate(x, y) {
