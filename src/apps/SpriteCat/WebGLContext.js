@@ -16,7 +16,7 @@ export class WebGLContext extends WebGLCanvas {
         if (data.drawCount) {
         }
         if(data.buffer){
-            this.program.updateBuffer(data.buffer);
+            this.program.updateBuffer(new Float32Array(data.buffer));
             this.drawCount = data.buffer.length / 4;
         }
         if (data.viewMatrix) {

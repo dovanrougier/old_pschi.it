@@ -6,8 +6,4 @@ export class Canvas2d extends Canvas{
 
         this.context = this.element.getContext('2d', contextOptions);
     }
-    
-    static setAspect(gl, aspect) {
-        Canvas.setAspect(gl.canvas, aspect);
-    }
 }

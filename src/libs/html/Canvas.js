@@ -7,7 +7,7 @@ export class Canvas extends HtmlElement {
         super(parent, Canvas.elementTag, options);
     }
 
-    aspect(){
+    getAspect(){
         return this.element.width / this.element.height;
     }
     

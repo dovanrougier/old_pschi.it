@@ -13,7 +13,6 @@ export class Attribute extends Parameter{
     }
 
     setValue(/** @type {WebGLRenderingContext} */gl, value){
-        this.value = value;
         if(!Array.isArray(value)){
             return gl.vertexAttrib1f(this.location, value);
         }

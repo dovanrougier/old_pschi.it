@@ -35,7 +35,7 @@ export class WebGLProgram extends Program {
             'mediump',
             [this.vTexCoord, this.uTexture],
             [
-                `gl_FragColor = texture2D(${this.uTexture}, ${this.vTexCoord});`
+                `gl_FragColor = texture2D(${this.uTexture}, ${this.vTexCoord});`,
             ].join('')
         );
 
@@ -59,8 +59,7 @@ export class WebGLProgram extends Program {
     }
 
     updateBuffer(data) {
-        this.data = data;
-        this.buffer.setData(this.gl, this.data, this.gl.STREAM_DRAW);
+        this.buffer.setData(this.gl, data, this.gl.STREAM_DRAW);
         return this;
     }
 
@@ -71,7 +70,6 @@ export class WebGLProgram extends Program {
     updateViewMatrix(matrix) {
         this.uViewMatrix.setValue(this.gl, matrix)
     }
-
 
     updateTexture(image) {
         this.texture.setParameter(this.gl, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);

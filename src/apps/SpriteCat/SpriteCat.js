@@ -4,6 +4,7 @@ import { Img } from '../../libs/html/Img';
 
 import { Cat } from './Cat';
 import { Camera } from '../../libs/3d/Camera';
+import { Matrix4 } from '../../libs/math/Matrix4';
 
 export class SpirteCat extends App {
     constructor(parent, options) {
@@ -11,7 +12,7 @@ export class SpirteCat extends App {
     }
 
     init() {
-        this.context = new WebGLContext(this.container, null, { alpha: false });
+        this.context = new WebGLContext(this.container, null, { alpha: true });
 
         this.max = 50;
         this.min = -this.max;
@@ -19,25 +20,27 @@ export class SpirteCat extends App {
         this.clicked = false;
         this.movementX = 0;
         this.movementY = 0;
-        this.cat = new Cat(2);
+        this.cat = new Cat(0, 0);
 
         this.camera = new Camera(
-            [0, 0, -20],
+            [0, 0, -512],
             [0, 0, 0],
             [0, 1, 0],
             45,
-            this.context.aspect(),
+            this.context.getAspect(),
             0.1,
             1000
         );
-        this.texture = new Img(null, {
-            src: Cat.texture,
+        this.imgLoader = new Img(null, {
+            src: Cat.texture.src,
             onload: () => {
+                const buffer = this.cat.idleRight();
+
                 this.updateRender({
-                    buffer: this.cat.play(Cat.animations.idle.right).nextFrame(),
+                    buffer: buffer,
                     vertexMatrix: this.cat.getMatrix(),
-                    viewMatrix: this.camera.matrix,
-                    texture: this.texture.element
+                    viewMatrix: this.camera.getMatrix(),
+                    texture: this.imgLoader.element
                 });
                 requestAnimationFrame(this.draw.bind(this));
             }
@@ -116,7 +119,7 @@ export class SpirteCat extends App {
     draw(now) {
         if (this.clicked) {
             const data = {
-                vertexMatrix: this.cat.getMatrix()
+                vertexMatrix: this.cat.getMatrix(),
             }
             const buffer = this.cat.walk(this.movementX * this.step, -this.movementY * this.step);
             if (buffer) {
@@ -139,4 +142,8 @@ export class SpirteCat extends App {
 
         return this;
     }
+}
+
+function hello(){
+    console.log('helloWorld');
 }

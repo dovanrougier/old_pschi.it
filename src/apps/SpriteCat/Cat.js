@@ -1,35 +1,41 @@
-import { Matrix4 } from '../../libs/math/Matrix4';
-import { Vector2 } from '../../libs/math/Vector2';
+import { Sprite } from '../../libs/2d/Sprite';
 import textureSrc from './cat.png';
 
-export class Cat {
-    constructor(variant) {
-        this.u = 1;
-        this.v = 0;
-        this.width = 32 / 512;
-        this.height = 32 / 256;
-        this.size = 1;
-        this.matrix = Matrix4.identityMatrix();
+export class Cat extends Sprite {
+    constructor(x, y, variant) {
+        super(x, y, Cat.texture.tileWidth, Cat.texture.tileHeight, 0, 0);
         this.setVariant(variant);
-        this.currentFrame = null;
-        this.currentAnimation = null;
-        this.frameCounter = 0;
+        this.refreshRate = 8;
     }
-
+    
+    static texture = {
+        src: textureSrc,
+        width: 512,
+        height: 256,
+        tileWidth: 32,
+        tileHeight: 32,
+    };
     static animations = {
         walk: {
-            left: [[2, 3], [0, 3], [1, 3]],
-            right: [[2, 0], [0, 0], [1, 0]],
-            top: [[2, 1], [0, 1], [1, 1]],
-            down: [[2, 2], [0, 2], [1, 2]],
+            left: [[64, 96], [0, 96], [32, 96]],
+            right: [[64, 0], [0, 0], [32, 0]],
+            up: [[64, 32], [0, 32], [32, 32]],
+            down: [[64, 64], [0, 64], [32, 64]],
         },
         idle: {
-            left: [[1, 3]],
-            right: [[1, 0]],
-            top: [[1, 1]],
-            down: [[1, 2]],
-        }
-    }
+            down: [[32, 96]],
+            right: [[32, 0]],
+            up: [[32, 32]],
+            down: [[32, 64]],
+        },
+        sleep: {
+            left: [[96, 96]],
+            right: [[96, 0]],
+        },
+        action: {
+            left: [[0, 160], [32, 160], [64, 160], [96, 160]],
+        },
+    };
 
     setVariant(variant) {
         this.setOffset((variant ?? 0) % 4 * this.width * 4);
@@ -39,26 +45,20 @@ export class Cat {
         this.offset = offset;
     }
 
-    play(animation) {
-        if (this.currentAnimation != animation) {
-            this.currentAnimation = animation;
-            this.animationFrame = -1;
-            this.frameCounter = 0;
-        }
-
-        return this;
+    idleLeft() {
+        return this.play(Cat.animations.idle.left);
     }
 
-    previousFrame() {
-        this.currentFrame = this.getData(this.currentAnimation[--this.animationFrame % this.currentAnimation.length]);
-
-        return this.currentFrame;
+    idleRight() {
+        return this.play(Cat.animations.idle.right);
     }
 
-    nextFrame() {
-        this.currentFrame = this.getData(this.currentAnimation[++this.animationFrame % this.currentAnimation.length]);
+    idleUp() {
+        return this.play(Cat.animations.idle.up);
+    }
 
-        return this.currentFrame;
+    idleDown() {
+        return this.play(Cat.animations.idle.down);
     }
 
     walk(x, y) {
@@ -73,41 +73,19 @@ export class Cat {
             }
         } else if (Math.abs(y) > Math.abs(x)) {
             if (y > 0) {
-                this.play(Cat.animations.walk.top);
+                this.play(Cat.animations.walk.up);
             } else {
                 this.play(Cat.animations.walk.down);
             }
         }
-        this.matrix.translate(x, y, 0);
-        if (this.frameCounter++ % 8 == 0) {
-            console.log('update')
-            this.u += 1;
-            this.u %= 3;
-            this.frameCounter = 1;
+        this.translate(x, y, 0);
+        if (this.tileCounter++ % this.refreshRate == 0) {
             return this.nextFrame();
         }
-        console.log('no update');
         return null;
     }
 
-    getData(frame) {
-        const u = frame[0] * this.width + this.offset,
-            v = frame[1] * this.height;
-
-        return new Float32Array([
-            -this.size, this.size, u, v,
-            -this.size, -this.size, u, v + this.height,
-            this.size, this.size, u + this.width, v,
-
-            -this.size, -this.size, u, v + this.height,
-            this.size, this.size, u + this.width, v,
-            this.size, -this.size, u + this.width, v + this.height,
-        ]);
+    render() {
+        return this.getTile();
     }
-
-    getMatrix() {
-        return this.matrix.values;
-    }
-
-    static texture = textureSrc;
 }

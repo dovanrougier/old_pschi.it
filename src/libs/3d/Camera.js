@@ -25,8 +25,12 @@ export class Camera {
 
     setMatrix() {
         if (this.perspectiveMatrix && this.lookAtMatrix) {
-            this.matrix = new Matrix4(this.perspectiveMatrix).multiply(this.lookAtMatrix).values;
+            this.matrix = new Matrix4(this.perspectiveMatrix).multiply(this.lookAtMatrix);
         }
+    }
+
+    getMatrix(){
+        return this.matrix.values;
     }
 
     tilt(radians) {

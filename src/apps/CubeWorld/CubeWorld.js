@@ -22,7 +22,7 @@ export class CubeWorld extends App {
             [0,0,0],
             [0,1,0],
             45,
-            this.context.aspect(),
+            this.context.getAspect(),
             0.1,
             1000
         );
@@ -138,7 +138,7 @@ export class CubeWorld extends App {
         this.init().updateRender({
             fog: this.fog,
             light: this.light,
-            viewMatrix: this.camera.matrix,
+            viewMatrix: this.camera.getMatrix(),
             vertexMatrix: Matrix4.identityMatrix().values,
             click: 0,
             buffer: this.cube.getInstancesData(),
@@ -159,7 +159,7 @@ export class CubeWorld extends App {
             this.camera.tilt(Radian.fromDegree(this.movementY * -this.step));
         }
         this.updateRender({
-            viewMatrix: this.camera.matrix,
+            viewMatrix: this.camera.getMatrix(),
         });
         this.context.draw();
         requestAnimationFrame(this.draw.bind(this));

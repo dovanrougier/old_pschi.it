@@ -1,18 +1,22 @@
 import { Canvas } from "./Canvas";
 
-export class WebGLCanvas extends Canvas{
-    constructor(parent, canvasOptions, contextOptions){
-        super(parent,canvasOptions);
+export class WebGLCanvas extends Canvas {
+    constructor(parent, canvasOptions, contextOptions) {
+        super(parent, canvasOptions);
 
         this.gl = this.element.getContext('webgl', contextOptions) || this.element.getContext('experimental-webgl', contextOptions);
-        
+
         WebGLCanvas.setAspect(this.gl, canvasOptions?.aspect);
         window.onresize = (e) => { WebGLCanvas.setAspect(this.gl, canvasOptions?.aspect); };
     }
-    
+
     static setAspect(gl, aspect) {
         Canvas.setAspect(gl.canvas, aspect);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    }
+
+    viewport(x, y, width, height) {
+        this.gl.viewport(x, y, width, height);
     }
 
     clearColor(r, g, b, a) {
@@ -27,7 +31,7 @@ export class WebGLCanvas extends Canvas{
         this.gl.disable(this.gl.DEPTH_TEST);
     }
 
-    clear(){
+    clear() {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     }
 

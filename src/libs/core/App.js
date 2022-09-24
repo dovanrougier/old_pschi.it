@@ -6,6 +6,10 @@ export class App extends Div {
         super(parent, options);
         this.container = new Div(this);
     }
+    
+    start() {
+        throw new Error(`${this.constructor.name} is missing ${this.start.name} implementation.`);
+    }
 
     stop() {
         this.state = null;

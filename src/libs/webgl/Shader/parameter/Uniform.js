@@ -13,32 +13,31 @@ export class Uniform extends Parameter {
     }
 
     setValue(/** @type {WebGLRenderingContext} */gl, value) {
-        this.value = value;
         switch (this.type) {
             case 'sampler2D':
             case 'bool':
-                gl.uniform1i(this.location, this.value);
+                gl.uniform1i(this.location, value);
                 return;
             case 'mat2':
-                gl.uniformMatrix2fv(this.location, false, this.value);
+                gl.uniformMatrix2fv(this.location, false, value);
                 return;
             case 'mat3':
-                gl.uniformMatrix3fv(this.location, false, this.value);
+                gl.uniformMatrix3fv(this.location, false, value);
                 return;
             case 'mat4':
-                gl.uniformMatrix4fv(this.location, false, this.value);
+                gl.uniformMatrix4fv(this.location, false, value);
                 return;
             case 'float':
-                gl.uniform1f(this.location, this.value);
+                gl.uniform1f(this.location, value);
                 return;
             case 'vec2':
-                gl.uniform2fv(this.location, this.value);
+                gl.uniform2fv(this.location, value);
                 return;
             case 'vec3':
-                gl.uniform3fv(this.location, this.value);
+                gl.uniform3fv(this.location, value);
                 return;
             case 'vec4':
-                gl.uniform4fv(this.location, this.value);
+                gl.uniform4fv(this.location, value);
                 return;
             case 'samplerCube':
             default:
