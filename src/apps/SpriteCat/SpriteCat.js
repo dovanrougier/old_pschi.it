@@ -78,13 +78,11 @@ export class SpirteCat extends App {
         this.step = 0.01;
         this.context.element.onpointerdown = e => {
             this.clicked = true;
-            this.context.requestPointerLock();
+            this.context.setPointerCapture(e.pointerId);
             this.updateMovement(e);
         };
         this.context.element.onpointerup = e => {
-            document.exitPointerLock = document.exitPointerLock ||
-                document.mozExitPointerLock;
-            document.exitPointerLock();
+            this.context.releasePointerCapture(e.pointerId);
             this.movementX = 0;
             this.movementY = 0;
             this.clicked = false;

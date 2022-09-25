@@ -59,10 +59,20 @@ export class HtmlElement {
     remove() {
         this.element.remove();
     }
+    
+    setPointerCapture(pointerId){
+        this.element.setPointerCapture(pointerId);
+    };
+    
+    releasePointerCapture(pointerId){
+        this.element.releasePointerCapture(pointerId);
+    };
 
     requestPointerLock() {
         this.element.requestPointerLock = this.element.requestPointerLock ||
             this.element.mozRequestPointerLock;
-        this.element.requestPointerLock();
+        if(this.element.requestPointerLock){
+            this.element.requestPointerLock();
+        }
     }
 }
