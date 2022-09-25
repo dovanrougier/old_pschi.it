@@ -45,24 +45,26 @@ export class Cat extends Sprite {
     }
 
     walk(x, y) {
-        let animation;
         if (Math.abs(x) > Math.abs(y)) {
             if (x > 0) {
                 this.idle = Cat.animations.idle.right;
-                animation = Cat.animations.walk.right;
+                this.animation = Cat.animations.walk.right;
             } else {
                 this.idle = Cat.animations.idle.left;
-                animation = Cat.animations.walk.left;
+                this.animation = Cat.animations.walk.left;
             }
         } else if (Math.abs(y) > Math.abs(x)) {
             if (y > 0) {
                 this.idle = Cat.animations.idle.up;
-                animation = Cat.animations.walk.up;
+                this.animation = Cat.animations.walk.up;
             } else {
                 this.idle = Cat.animations.idle.down;
-                animation = Cat.animations.walk.down;
+                this.animation = Cat.animations.walk.down;
             }
         }
-        return this.play(animation ?? this.idle);
+        if(x== 0 && y == 0){
+            return this.play(this.idle);
+        }
+        return this.play(this.animation ?? this.idle);
     }
 }
