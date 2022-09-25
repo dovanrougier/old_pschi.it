@@ -5,8 +5,7 @@ import { Img } from '../../libs/html/Img';
 import { Cat } from './Cat';
 import { Camera } from '../../libs/3d/Camera';
 import { WebGLCanvas } from '../../libs/html/WebGLCanvas';
-import { TileMap } from './TileMap';
-import { Radian } from '../../libs/math/Radian';
+import { Interior } from './Interior';
 
 export class SpirteCat extends App {
     constructor(parent, options) {
@@ -33,7 +32,7 @@ export class SpirteCat extends App {
         this.data.cat.buffer = this.cat.getBufferData();
         this.data.cat.vertexMatrix = this.cat.getMatrix();
 
-        this.tileMap = new TileMap(0, 0, 1600, 1600);
+        this.tileMap = new Interior(0, 0, 1600, 1600);
         this.data.tileMap.buffer = this.tileMap.getBufferData();
         this.data.tileMap.vertexMatrix = this.tileMap.getMatrix();
 
@@ -53,7 +52,7 @@ export class SpirteCat extends App {
             src: Cat.texture.src,
             onload: () => {
                 this.imgLoader.push(new Img(null, {
-                    src: TileMap.texture.src,
+                    src: Interior.texture.src,
                     onload: () => {
                         this.data.tileMap.texture = this.imgLoader[1].element;
                         requestAnimationFrame(this.updateRender.bind(this));
@@ -79,13 +78,11 @@ export class SpirteCat extends App {
         this.step = 0.01;
         this.context.element.onpointerdown = e => {
             this.clicked = true;
-            this.context.requestPointerLock();
+            this.context.setPointerCapture(e.pointerId);
             this.updateMovement(e);
         };
         this.context.element.onpointerup = e => {
-            document.exitPointerLock = document.exitPointerLock ||
-                document.mozExitPointerLock;
-            document.exitPointerLock();
+            this.context.releasePointerCapture(e.pointerId);
             this.movementX = 0;
             this.movementY = 0;
             this.clicked = false;

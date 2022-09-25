@@ -1,4 +1,3 @@
-import { Rectangle } from "./Rectangle";
 import { Tile } from "./Tile";
 
 export class RepeatedTile extends Tile {

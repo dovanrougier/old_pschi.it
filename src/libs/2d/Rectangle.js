@@ -9,6 +9,7 @@ export class Rectangle {
         this.color = color;
         this.vertexBuffer = Rectangle.getVertexBuffer(this.x, this.y, this.width, this.height);
         this.matrix = Matrix4.identityMatrix();
+        this.instances = [];
     }
 
     setColor(color) {
@@ -39,6 +40,39 @@ export class Rectangle {
 
     getVertexBuffer() {
         return this.vertexBuffer;
+    }
+
+    pushInstance(x, y, width, height, color) {
+        this.instances.push([x, y, width, height, color]);
+    }
+
+    popInstance(x, y, width, height, color) {
+        this.instances.pop([x, y, width, height, color]);
+    }
+
+    getInstanceVertexBuffer() {
+        const result = new Float32Array(this.instances.length * 12);
+        let i = 0;
+        this.instances.forEach(instance => {
+            const x = instance[0] / 2,
+                y = instance[1] / 2,
+                xw = x + instance[2],
+                yh = y + instance[3];
+
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = x;
+            result[i++] = y;
+        });
+        return result;
     }
 
     static getVertexBuffer(x, y, width, height) {

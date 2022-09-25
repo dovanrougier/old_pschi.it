@@ -60,13 +60,11 @@ export class CubeWorld extends App {
 
         this.context.element.onpointerdown = e => {
             this.clicked = true;
-            this.context.requestPointerLock();
+            this.context.setPointerCapture(e.pointerId);
             this.updateMovement(e);
         }
         this.context.element.onpointerup = e => {
-            document.exitPointerLock = document.exitPointerLock ||
-                document.mozExitPointerLock;
-            document.exitPointerLock();
+            this.context.releasePointerCapture(e.pointerId);
             this.movementX = 0;
             this.movementY = 0;
             this.clicked = false;

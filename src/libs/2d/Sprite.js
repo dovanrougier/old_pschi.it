@@ -1,8 +1,8 @@
 import { Tile } from "./Tile";
 
 export class Sprite extends Tile {
-    constructor(x, y, width, height, u, v, tileWidth, tileHeight) {
-        super(x, y, width, height, u, v, tileWidth, tileHeight);
+    constructor(x, y, width, height, u, v, tileWidth, tileHeight, color) {
+        super(x, y, width, height, u, v, tileWidth, tileHeight, color);
         this.currentTile = null;
         this.currentAnimation = null;
         this.animationTile = -1;

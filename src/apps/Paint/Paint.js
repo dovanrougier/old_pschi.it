@@ -147,9 +147,11 @@ export class Paint extends App {
             this.clicked = false;
         };
         this.context.element.onpointerup = e => {
+            this.context.releasePointerCapture(e.pointerId);
             this.clicked = false;
         };
         this.context.element.onpointerdown = e => {
+            this.context.setPointerCapture(e.pointerId);
             this.clicked = true;
             this.state.new();
             this.updateState(e);
