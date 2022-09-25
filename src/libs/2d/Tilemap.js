@@ -1,4 +1,3 @@
-import { RepeatedTile } from './RepeatedTile';
 import { Rectangle } from './Rectangle';
 
 export class TileMap extends Rectangle {

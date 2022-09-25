@@ -1,6 +1,4 @@
 import { Program } from '../../libs/webgl/Program';
-import { Buffer } from '../../libs/webgl/Buffer';
-import { Texture } from '../../libs/webgl/Texture';
 import { Attribute } from '../../libs/webgl/Shader/parameter/Attribute';
 import { Uniform } from '../../libs/webgl/Shader/parameter/Uniform';
 import { Varying } from '../../libs/webgl/Shader/parameter/Varying';
