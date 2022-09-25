@@ -22,6 +22,11 @@ export class WebGLCanvas extends Canvas {
         this.gl.clearColor(r, g, b, a);
     }
 
+    enableBlend() {
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+    }
+
     enableDepthTest() {
         this.gl.enable(this.gl.DEPTH_TEST);
     }

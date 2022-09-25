@@ -71,7 +71,7 @@ export class WebGLProgram extends Program {
     }
 
     updateTexture(image) {
-        this.texture.setParameter(this.gl, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.texture.setParameter(this.gl, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
         this.texture.setTexture(this.gl, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
         this.uTexture.setValue(this.gl, this.texture.index);
     }

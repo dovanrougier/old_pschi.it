@@ -41,7 +41,7 @@ export class Camera {
 
     tilt(radians) {
         this.lookAtMatrix.tilt(radians);
-        this.setMatrix();
+        return this.setMatrix();
 
     }
 
