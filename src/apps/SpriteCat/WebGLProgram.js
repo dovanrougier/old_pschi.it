@@ -8,7 +8,7 @@ import { VertexShader } from '../../libs/webgl/Shader/VertexShader';
 import { FragmentShader } from '../../libs/webgl/Shader/FragmentShader';
 
 export class WebGLProgram extends Program {
-    constructor(/** @type {WebGLRenderingContext} */gl) {
+    constructor(/** @type {WebGLRenderingContext} */gl, buffer, texture) {
         super(gl);
         this.data = [];
     }
@@ -48,18 +48,16 @@ export class WebGLProgram extends Program {
         this.use();
         this.saveLocation();
 
-        this.buffer = new Buffer(this.gl, this.gl.ARRAY_BUFFER);
-        this.texture = new Texture(this.gl, this.gl.TEXTURE_2D);
-
-        this.aVertexPosition.enableBuffer(this.gl, this.buffer, 2, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, 0);
-        this.aTexCoord.enableBuffer(this.gl, this.buffer, 2, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, Float32Array.BYTES_PER_ELEMENT * 2);
-
         return this;
     }
 
-    updateBuffer(data) {
-        this.buffer.setData(this.gl, data, this.gl.STREAM_DRAW);
-        return this;
+    setBuffer(buffer) {
+        this.aVertexPosition.enableBuffer(this.gl, buffer, 2, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, 0);
+        this.aTexCoord.enableBuffer(this.gl, buffer, 2, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, Float32Array.BYTES_PER_ELEMENT * 2);
+    }
+
+    setTexture(texture) {
+        this.uTexture.setValue(this.gl, texture.index);
     }
 
     updateVertexMatrix(matrix) {
@@ -68,11 +66,5 @@ export class WebGLProgram extends Program {
 
     updateViewMatrix(matrix) {
         this.uViewMatrix.setValue(this.gl, matrix)
-    }
-
-    updateTexture(image) {
-        this.texture.setParameter(this.gl, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
-        this.texture.setTexture(this.gl, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
-        this.uTexture.setValue(this.gl, this.texture.index);
     }
 }

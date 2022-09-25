@@ -2,9 +2,8 @@ import { RepeatedTile } from './RepeatedTile';
 import { Rectangle } from './Rectangle';
 
 export class TileMap extends Rectangle {
-    constructor(x, y, width, height, mapping, tileWidth, tileHeight, textureWidth, textureHeight, color) {
+    constructor(x, y, width, height, tileWidth, tileHeight, textureWidth, textureHeight, color) {
         super(x, y, width, height, color);
-        this.mapping = mapping;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.textureWidth = textureWidth;
@@ -15,26 +14,26 @@ export class TileMap extends Rectangle {
         return true;
     }
 
-    getBufferData() {
-        const totalCount = 24 * ((this.width / this.tileWidth) * (this.height / this.tileHeight));
+    static getBufferData(mapping, width, height, tileWidth, tileHeight, textureWidth, textureHeight) {
+        const totalCount = 24 * ((width / tileWidth) * (height / tileHeight));
         const result = new Array(totalCount);
         let i = 0;
-        const textureWidth = this.tileWidth / this.textureWidth,
-            textureHeight = this.tileHeight / this.textureHeight;
-        this.mapping.forEach(tile => {
+        textureWidth = tileWidth / textureWidth;
+        textureHeight = tileHeight / textureHeight;
+        mapping.forEach(tile => {
             let x = tile[0],
                 y = tile[1],
                 width = tile[2],
                 height = tile[3];
-            const u = tile[4] * textureWidth,
-                v = tile[5] * textureHeight,
+            const u = tile[4][0] * textureWidth,
+                v = tile[4][1] * textureHeight,
                 uw = u + textureWidth,
                 vh = v + textureHeight;
             do {
                 const instanceX = x,
                     instanceY = y,
-                    instanceWidth = this.tileWidth,
-                    instanceHeight = this.tileHeight,
+                    instanceWidth = tileWidth,
+                    instanceHeight = tileHeight,
                     xw = instanceX + instanceWidth,
                     yh = instanceY + instanceHeight;
 
@@ -68,13 +67,13 @@ export class TileMap extends Rectangle {
                 result[i++] = uw;
                 result[i++] = vh;
 
-                x += this.tileWidth;
-                width -= this.tileWidth;
+                x += tileWidth;
+                width -= tileWidth;
                 if (width <= 0) {
                     x = tile[0];
                     width = tile[2];
-                    y += this.tileHeight;
-                    height -= this.tileHeight;
+                    y += tileHeight;
+                    height -= tileHeight;
                 }
             } while (height > 0);
         });
