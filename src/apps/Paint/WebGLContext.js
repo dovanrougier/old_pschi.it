@@ -13,14 +13,11 @@ export class WebGLContext extends WebGLCanvas {
     }
 
     updateCanvas(data) {
-        this.program.updateBuffer(data);
-        this.drawCount = data.length / 8;
-    }
-
-    draw() {
+        if(data){
+            this.program.updateBuffer(new Float32Array(data));
+            this.drawCount = data.length / 8;
+        }
         this.clear();
         this.program.draw(this.drawMode, this.first, this.drawCount);
-
-        return this;
     }
 }

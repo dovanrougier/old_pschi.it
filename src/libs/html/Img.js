@@ -31,8 +31,8 @@ export class Img extends HtmlElement {
             width: resultOptions.width,
             height: resultOptions.height
         });
-        canvas.context.drawImage(this.element, 0, 0, this.element.width, this.element.height);
-        canvas.context.drawImage(image.element, this.element.width, 0, image.element.width, image.element.height);
+        canvas.drawImage(this.element, 0, 0, this.element.width, this.element.height);
+        canvas.drawImage(image.element, this.element.width, 0, image.element.width, image.element.height);
 
         var img = canvas.element.toDataURL("image/png");
         resultOptions.src = img;
@@ -53,8 +53,8 @@ export class Img extends HtmlElement {
             width: resultOptions.width,
             height: resultOptions.height
         });
-        canvas.context.drawImage(this.element, 0, 0, this.element.width, this.element.height);
-        canvas.context.drawImage(image.element, 0, this.element.height, image.element.width, image.element.height);
+        canvas.drawImage(this.element, 0, 0, this.element.width, this.element.height);
+        canvas.drawImage(image.element, 0, this.element.height, image.element.width, image.element.height);
 
         var img = canvas.element.toDataURL("image/png");
         resultOptions.src = img;
@@ -66,9 +66,9 @@ export class Img extends HtmlElement {
 
     flipY(onload){
         const canvas = new Canvas2d();
-        canvas.context.translate(this.element.width, 0);
-        canvas.context.scale(-1,1);
-        canvas.context.drawImage(this.element, 0, 0, this.element.width, this.element.height);
+        canvas.translate(this.element.width, 0);
+        canvas.scale(-1,1);
+        canvas.drawImage(this.element, 0, 0, this.element.width, this.element.height);
 
         var img = canvas.element.toDataURL("image/png");
         this.element.onload = onload;
@@ -81,6 +81,24 @@ export class Img extends HtmlElement {
     static loadImage(src, onload) {
         const img = new Img();
         img.loadImage(src, onload);
-        return this;
+        return img;
+    }
+
+    static drawStick(onload){
+        const canvas = new Canvas2d();
+        canvas.shadowColor = "#FF9900";
+        canvas.shadowBlur = 15;
+        canvas.strokeStyle = "#FF9900";
+        canvas.fillStyle = "#FF9900";
+        canvas.fillRect(25, 25, 100, 100);
+        canvas.clearRect(45, 45, 60, 60);
+        canvas.strokeRect(50, 50, 50, 50);
+
+        var src = canvas.element.toDataURL("image/png");
+        
+        return new Img(null, {
+            src: src,
+            onload: onload,
+        });
     }
 }

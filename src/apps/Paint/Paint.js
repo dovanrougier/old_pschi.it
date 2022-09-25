@@ -38,7 +38,7 @@ export class Paint extends App {
         this.createEventListener();
     }
 
-    createButton(){
+    createButton() {
         this.control = [];
         const updatePointSize = (event) => {
             this.configuration.pointSize = event.target.value;
@@ -133,8 +133,8 @@ export class Paint extends App {
         }));
     }
 
-    createEventListener(){
-        this.context.element.onpointermove  = this.updateState.bind(this);
+    createEventListener() {
+        this.context.element.onpointermove = this.updateState.bind(this);
         this.context.element.onpointerenter = e => {
             this.inCanvas = true;
             this.clicked = e.buttons != 0;
@@ -159,29 +159,34 @@ export class Paint extends App {
     updateState(event) {
         if (this.clicked && this.inCanvas) {
             this.configuration.position = Canvas.getMouseRelativePositon(event, this.context.element);
-            this.state.push(
-                [this.configuration.position[0], this.configuration.position[1],
+            const round = 80;
+            this.state.push([
+                this.configuration.position[0],
+                this.configuration.position[1],
                 this.configuration.pointSize,
                 this.configuration.pointLimit,
                 this.configuration.red,
                 this.configuration.green,
                 this.configuration.blue,
-                this.configuration.alpha]);
-
-            this.updateRender(new Float32Array(this.state.getData()));
+                this.configuration.alpha
+            ]);
         }
 
         return this;
     }
 
-    updateRender(data) {
+    updateRender() {
+        let data;
+        if (this.state.updated) {
+            data = this.state.getData()
+        }
         this.context.updateCanvas(data);
 
-        requestAnimationFrame(this.context.draw.bind(this.context));
+        requestAnimationFrame(this.updateRender.bind(this));
     }
 
     start() {
-        this.init().updateRender(new Float32Array(this.state.getData()));
+        this.init().updateRender();
 
         return this;
     }

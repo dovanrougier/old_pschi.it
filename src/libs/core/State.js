@@ -3,12 +3,14 @@ export class State {
         this.data = [[]];
         this.currentIndex = 0;
         this.elementSize = elementSize;
+        this.updated = false;
     }
     getSlicedData() {
         return this.data.slice(0, this.currentIndex + 1);
     }
 
     getData(){
+        this.updated = false;
         return this.getSlicedData().flat();
     }
 
@@ -19,6 +21,7 @@ export class State {
         for (let i = this.elementSize; i > 0; --i) {
             this.data[this.currentIndex].pop(element[i]);
         }
+        this.updated = true;
     }
 
     push(element) {
@@ -28,12 +31,14 @@ export class State {
         for (let i = 0; i < this.elementSize; i++) {
             this.data[this.currentIndex].push(element[i]);
         }
+        this.updated = true;
     }
 
     previous() {
         if (this.currentIndex == 0) {
             return false;
         }
+        this.updated = true;
         this.currentIndex--;
         return true;
     }
@@ -42,6 +47,7 @@ export class State {
         if (this.currentIndex >= this.data.length) {
             return false;
         }
+        this.updated = true;
         this.currentIndex++;
         return true;
     }
