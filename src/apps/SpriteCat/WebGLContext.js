@@ -12,7 +12,7 @@ export class WebGLContext extends WebGLCanvas {
         this.drawMode = this.gl.TRIANGLES;
         this.first = 0;
 
-        this.cache = WebGLContext.contract
+        this.cache = WebGLContext.contract;
     }
 
     static contract = {

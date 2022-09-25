@@ -1,8 +1,8 @@
 import { Rectangle } from "./Rectangle";
 
 export class Tile extends Rectangle {
-    constructor(x, y, width, height, u, v, tileWidth, tileHeight) {
-        super(x, y, width, height);
+    constructor(x, y, width, height, u, v, tileWidth, tileHeight, color) {
+        super(x, y, width, height, color);
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.setUV(u, v);
@@ -41,7 +41,7 @@ export class Tile extends Rectangle {
     getBufferData() {
         return this.bufferData;
     }
-
+    
     static getTextureBuffer(u, v, width, height) {
         u *= width;
         v *= height;
