@@ -1,23 +1,23 @@
-import { HtmlNode } from "./HtmlNode";
+import { HtmlElement } from "./HtmlElement";
 
-export class Canvas extends HtmlNode {
+export class Canvas extends HtmlElement {
     static elementTag = 'canvas';
 
-    constructor(options) {
-        super(Canvas.elementTag, options);
+    constructor(parent, options) {
+        super(parent, Canvas.elementTag, options);
     }
 
-    getAspect() {
+    getAspect(){
         return this.element.width / this.element.height;
     }
-
-    resize(width, height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    fitBody() {
-        this.resize(document.body.clientWidth, document.body.clientHeight);
+    
+    static setAspect(canvas, aspect) {
+        canvas.width = document.body.clientWidth;
+        if (aspect) {
+            canvas.height = document.body.clientWidth / aspect;
+        } else {
+            canvas.height = document.body.clientHeight;
+        }
     }
 
     // assumes canvas doesn't have padding or border

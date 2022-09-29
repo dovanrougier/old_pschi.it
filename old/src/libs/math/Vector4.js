@@ -2,13 +2,13 @@ import { Vector2 } from "./Vector2";
 import { Vector3 } from "./Vector3";
 
 export class Vector4 {
-    constructor(x, y, z, w) {
+    constructor(values, y, z, w) {
         this.values = new Float32Array(4);
-        if (typeof x !== 'undefined') {
+        if (typeof values !== 'undefined') {
             if (Number.isFinite(y) && Number.isFinite(z) && Number.isFinite(w)) {
-                x = [x, y, z]
+                values = [values, y, z]
             }
-            this.setTo(x);
+            this.setTo(values);
         }
     }
 

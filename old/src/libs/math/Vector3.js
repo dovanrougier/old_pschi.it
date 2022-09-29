@@ -3,20 +3,14 @@ import { Matrix4 } from "./Matrix4";
 import { Vector2 } from "./Vector2";
 import { Vector4 } from "./Vector4";
 
-
-
 export class Vector3 {
-    static _xAxis =  new Vector3( 1, 0, 0 );
-    static _yAxis =  new Vector3( 0, 1, 0 );
-    static _zAxis =  new Vector3( 0, 0, 1 );
-
-    constructor(x, y, z) {
+    constructor(values, y, z) {
         this.values = new Float32Array(3);
-        if (typeof x !== 'undefined') {
+        if (typeof values !== 'undefined') {
             if (Number.isFinite(y) && Number.isFinite(z)) {
-                x = [x, y, z]
+                values = [values, y, z]
             }
-            this.setTo(x);
+            this.setTo(values);
         }
     }
 

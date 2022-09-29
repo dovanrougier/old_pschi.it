@@ -1,4 +1,4 @@
-export class State extends Node {
+export class State {
     constructor(elementSize) {
         this.data = [[]];
         this.currentIndex = 0;
@@ -9,7 +9,7 @@ export class State extends Node {
         return this.data.slice(0, this.currentIndex + 1);
     }
 
-    getData() {
+    getData(){
         this.updated = false;
         return this.getSlicedData().flat();
     }

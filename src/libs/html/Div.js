@@ -1,9 +1,8 @@
-import { HtmlElement } from "./HtmlElement";
+import { HtmlNode } from './HtmlNode';
 
-export class Div extends HtmlElement {
+export class Div extends HtmlNode {
     static elementTag = 'div';
-
-    constructor(parent, options) {
-        super(parent, Div.elementTag, options);
+    constructor(options) {
+        super(Div.elementTag, options);
     }
 }

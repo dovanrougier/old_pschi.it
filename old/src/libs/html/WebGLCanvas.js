@@ -1,40 +1,25 @@
-import { Vector4 } from "../math/Vector4";
 import { Canvas } from "./Canvas";
 
 export class WebGLCanvas extends Canvas {
-    constructor(canvasOptions, contextOptions) {
-        super(canvasOptions);
+    constructor(parent, canvasOptions, contextOptions) {
+        super(parent, canvasOptions);
 
         this.gl = this.element.getContext('webgl', contextOptions) || this.element.getContext('experimental-webgl', contextOptions);
-        if (!this.gl) {
-            this.element.innerText = 'WebGL is not supported.'
-        }
+
+        WebGLCanvas.setAspect(this.gl, canvasOptions?.aspect);
     }
 
-    render(scene) {
-        this.clearColor(scene.background);
-
-        requestAnimationFrame(this.draw.bind(this));
-    }
-
-    draw() {
-        this.clear();
-    }
-
-    resize(width, height) {
-        super.resize(width, height);
-        this.viewport(0, 0, width, height);
+    static setAspect(gl, aspect) {
+        Canvas.setAspect(gl.canvas, aspect);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     }
 
     viewport(x, y, width, height) {
         this.gl.viewport(x, y, width, height);
     }
 
-    clearColor(color) {
-        if (color) {
-            this.gl.clear(color.r, color.g, color.b, color.a);
-        }
-        this.gl.clearColor(0, 0, 0, 1);
+    clearColor(r, g, b, a) {
+        this.gl.clearColor(r, g, b, a);
     }
 
     enableBlend() {
@@ -52,5 +37,12 @@ export class WebGLCanvas extends Canvas {
 
     clear() {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    }
+
+    stop() {
+        this.program.delete();
+        this.program = null;
+
+        return this;
     }
 }

@@ -16,7 +16,7 @@ export class HtmlElement {
                 this.element.innerHTML = options.innerHTML;
             }
             if (options.innerText) {
-                this.element.name = options.innerText;
+                this.element.innerText = options.innerText;
             }
             if (options.width) {
                 this.element.width = options.width;
