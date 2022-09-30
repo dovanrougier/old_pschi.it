@@ -23,7 +23,7 @@ export class Buffer {
 
     setData(/** @type {WebGLRenderingContext} */gl, bufferData, usage) {
         this.bind(gl);
-        gl.bufferData(this.type, bufferData, usage);
+        gl.bufferData(this.type, bufferData, gl[usage]);
     }
 
     setSubData(/** @type {WebGLRenderingContext} */gl, offset, bufferData) {

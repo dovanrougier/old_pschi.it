@@ -1,6 +1,7 @@
 import { Matrix4 } from "../math/Matrix4";
 import { Vector3 } from "../math/Vector3";
 import { Node } from "../core/Node";
+import { NodeError } from "../core/error/node/NodeError";
 
 export class Node3D extends Node {
     constructor() {
@@ -14,39 +15,26 @@ export class Node3D extends Node {
         this.matrixWorld = Matrix4.identityMatrix();
     }
 
-    translate(x, y, z) {
-        if(Array.isArray(x)){
-            z = x[2];
-            y = x[1];
-            x = x[0];
+    validateType(child) {
+        if (!child.constructor.name === Node3D) {
+            return new NodeError(this, `${child.constructor.name} can't be child of ${this.constructor.name}.`);
         }
+        return null;
+    }
+
+    translate(x, y, z) {
         this.matrix.translate(x, y, z);
     }
 
     scale(x, y, z) {
-        if(Array.isArray(x)){
-            z = x[2];
-            y = x[1];
-            x = x[0];
-        }
         this.matrix.scale(x, y, z);
     }
 
     rotate(radians, x, y, z) {
-        if(Array.isArray(x)){
-            z = x[2];
-            y = x[1];
-            x = x[0];
-        }
         this.matrix.rotate(radians, x, y, z);
     }
 
     lookAt(x, y, z) {
-        if(Array.isArray(x)){
-            z = x[2];
-            y = x[1];
-            x = x[0];
-        }
         this.center = new Vector3(x, y, z);
         this.matrix = Matrix4.lookAtMatrix(this.position, this.center, this.up);
     }

@@ -3,16 +3,18 @@ import { Parameter } from './Parameter';
 export class Uniform extends Parameter {
     constructor(type, name) {
         super(type, name);
+        this.value = null;
     }
 
     saveLocation(/** @type {WebGLRenderingContext} */gl, program) {
-        if(this.location){
+        if (this.location) {
             return this.location;
         }
         this.location = gl.getUniformLocation(program, this.name);
     }
 
     setValue(/** @type {WebGLRenderingContext} */gl, value) {
+        this.value = value;
         switch (this.type) {
             case 'sampler2D':
             case 'bool':
@@ -28,7 +30,11 @@ export class Uniform extends Parameter {
                 gl.uniformMatrix4fv(this.location, false, value);
                 return;
             case 'float':
-                gl.uniform1f(this.location, value);
+                if (Array.isArray(value)) {
+                    gl.uniform1fv(this.location, value);
+                } else {
+                    gl.uniform1f(this.location, value);
+                }
                 return;
             case 'vec2':
                 gl.uniform2fv(this.location, value);

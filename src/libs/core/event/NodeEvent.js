@@ -1,7 +1,8 @@
-export class NodeEvent extends Event{
-    constructor(targetNode, type, options){
-        super(type,options);
-        options = options || {};
-        options.target = targetNode;
+export class NodeEvent extends Event {
+    constructor(type, options) {
+        super(type, options);
+        if(options){
+            this.child = options.child;
+        }
     }
 }

@@ -1,7 +1,9 @@
 export class Program {
     constructor(/** @type {WebGLRenderingContext} */gl) {
         this.gl = gl;
-        this.init();
+        this.vertexShader = null;
+        this.fragmentShader = null;
+        this.created = false;
     }
 
     attachShader(shader) {
@@ -17,18 +19,21 @@ export class Program {
         return this;
     }
 
-    create(vertexShader, fragmentShader) {
-        this.program = this.gl.createProgram();
-        this.attachShader(vertexShader);
-        this.attachShader(fragmentShader);
-        this.link();
+    create() {
+        if (!this.created) {
+            this.program = this.gl.createProgram();
+            this.attachShader(this.vertexShader);
+            this.attachShader(this.fragmentShader);
+            this.link();
 
-        if (this.getLinkStatus) {
-            return true;
+            if (this.getLinkStatus) {
+                this.created = true;
+                return true;
+            }
+            const error = new Error(`Failed to create program : ${this.gl.getProgramInfoLog(this.program)}`,);
+            this.delete();
+            throw error;
         }
-        const error = new Error(`Failed to create program : ${this.gl.getProgramInfoLog(this.program)}`,);
-        this.delete();
-        throw error;
     }
 
     getLinkStatus() {
@@ -38,22 +43,15 @@ export class Program {
     delete() {
         this.gl.deleteProgram(this.program);
         this.program = null;
-
-        return this;
-    }
-
-    init() {
-        throw new Error(`${this.constructor.name} is missing ${this.init.name} implementation.`);
-    }
-
-    draw(drawMode, first, drawCount) {
-        this.gl.drawArrays(drawMode, first, drawCount);
+        this.created = false;
 
         return this;
     }
 
     use() {
+        this.create();
         this.gl.useProgram(this.program);
+        this.saveLocation();
 
         return this;
     }

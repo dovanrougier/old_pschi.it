@@ -5,30 +5,20 @@ import { Vector4 } from "./Vector4";
 
 
 
-export class Vector3 {
-    static _xAxis =  new Vector3( 1, 0, 0 );
-    static _yAxis =  new Vector3( 0, 1, 0 );
-    static _zAxis =  new Vector3( 0, 0, 1 );
-
+export class Vector3 extends Float32Array{
     constructor(x, y, z) {
-        this.values = new Float32Array(3);
+        super(3);
         if (typeof x !== 'undefined') {
             if (Number.isFinite(y) && Number.isFinite(z)) {
                 x = [x, y, z]
             }
-            this.setTo(x);
+            this.set(x);
         }
     }
 
-    setTo(vector) {
-        const values = vector.constructor === Vector3 ? vector.values : vector;
-
-        this.values[0] = values[0];
-        this.values[1] = values[1];
-        this.values[2] = values[2];
-
-        return this;
-    }
+    static _xAxis =  new Vector3( 1, 0, 0 );
+    static _yAxis =  new Vector3( 0, 1, 0 );
+    static _zAxis =  new Vector3( 0, 0, 1 );
 
     add(vector) {
         this.values[0] += vector.values[0];

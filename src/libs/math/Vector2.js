@@ -4,23 +4,15 @@ import { Matrix4 } from "./Matrix4";
 import { Vector3 } from "./Vector3";
 import { Vector4 } from "./Vector4";
 
-export class Vector2 {
+export class Vector2 extends Float32Array{
     constructor(x, y) {
-        this.values = new Float32Array(2);
+        super(2);
         if (typeof x !== 'undefined') {
             if (Number.isFinite(y)) {
                 x = [x, y]
             }
-            this.setTo(x);
+            this.set(x);
         }
-    }
-
-    setTo(vector) {
-        const values = vector.constructor === Vector2 ? vector.values : vector;
-        this.values[0] = values[0];
-        this.values[1] = values[1];
-
-        return this;
     }
 
     add(vector) {

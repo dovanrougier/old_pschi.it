@@ -1,9 +1,10 @@
-import { Vector3 } from "../math/Vector3";
+import { Vector3 } from "../../math/Vector3";
+import { Node3D } from "../Node3D";
 
-export class Light{
-    constructor(position, color, ambientColor){
-        this.position = new Vector3(position).values;
-        this.color = new Vector3(color).values;
-        this.ambientColor = new Vector3(ambientColor).values;
+export class Light extends Node3D {
+    constructor(color, intensisty = 1) {
+        super();
+        this.color = new Vector3(color);
+        this.intensisty = intensisty;
     }
 }

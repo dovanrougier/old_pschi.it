@@ -5,4 +5,6 @@ export class Color {
         this.b = b;
         this.a = a;
     }
+
+    static vectorLength = 4;
 }

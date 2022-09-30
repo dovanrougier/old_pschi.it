@@ -1,7 +1,7 @@
 import { Shader } from "./Shader";
 
 export class VertexShader extends Shader {
-    constructor(parameters, main,) {
+    constructor(parameters, main) {
         super(parameters, main);
     }
 

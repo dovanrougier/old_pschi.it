@@ -7,19 +7,6 @@ export class Canvas extends HtmlNode {
         super(Canvas.elementTag, options);
     }
 
-    getAspect() {
-        return this.element.width / this.element.height;
-    }
-
-    resize(width, height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    fitBody() {
-        this.resize(document.body.clientWidth, document.body.clientHeight);
-    }
-
     // assumes canvas doesn't have padding or border
     static getMouseRelativePositon(event, canvas) {
         const rect = canvas.getBoundingClientRect();

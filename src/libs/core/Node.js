@@ -12,17 +12,25 @@ export class Node extends EventTarget {
         this.visible = true;
     }
 
+    validateType(child) {
+        if (!child.constructor.name === Node) {
+            return new NodeError(this, `${child.constructor.name} can't be child of ${this.constructor.name}.`);
+        }
+        return null;
+    }
+
     appendChild(child) {
         if (arguments.length > 1) {
             return Node.repeatFunction(arguments, this.appendChild.bind(this));
         }
         if (!child) {
-            throw new NodeError(this, `Cannot appendChild ${child}`);
+            throw new NodeError(this, `Child is ${child}.`);
         }
-        if (!child.constructor.name === Node) {
-            throw new NodeError(this, `${child.constructor.name} is not a Node.`);
+        const error = this.validateType(child);
+        if (error) {
+            throw error;
         }
-        if (this === child) {
+        if (parent === child) {
             throw new NodeError(this, `Node ${child.id} can not be his own child.`);
         }
         if (child.parent) {
@@ -31,7 +39,7 @@ export class Node extends EventTarget {
 
         child.parent = this;
         this.children.push(child);
-        this.dispatchEvent(new NodeEvent(child, Node.event.nodeInserted));
+        this.dispatchEvent(new NodeEvent(Node.event.nodeInserted, { child: child }));
 
         return child;
     }
@@ -40,15 +48,6 @@ export class Node extends EventTarget {
         if (arguments.length > 1) {
             return Node.repeatFunction(arguments, this.removeChild.bind(this));
         }
-        if (!child) {
-            throw new NodeError(this, `Cannot removeChild ${child}`);
-        }
-        if (!child.constructor.name === Node) {
-            throw new NodeError(this, `${child.constructor.name} is not a Node.`);
-        }
-        if (this === child) {
-            throw new NodeError(this, `Node ${child.id} can not be his own child.`);
-        }
         const index = this.indexOf(child);
         if (index === -1) {
             throw new NodeError(this, `Node ${child.id} not found.`);
@@ -56,13 +55,13 @@ export class Node extends EventTarget {
 
         child.parent = null;
         this.children.splice(index, 1);
-        this.dispatchEvent(new NodeEvent(child, Node.event.nodeRemoved));
+        this.dispatchEvent(new NodeEvent(Node.event.nodeRemoved, {child: child}));
 
         return child;
     }
 
     indexOf(node) {
-        return this.children.findIndex(c =>  c.id === node.id);
+        return this.children.findIndex(c => c.id === node.id);
     }
 
     clone(deep) {
@@ -72,7 +71,7 @@ export class Node extends EventTarget {
     copy(source, deep) {
         const id = this.id;
         for (const property in source) {
-                this[property] = source[property];
+            this[property] = source[property];
         }
         this.id = id;
     }

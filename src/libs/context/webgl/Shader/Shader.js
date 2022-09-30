@@ -30,7 +30,7 @@ export class Shader {
 
     updateShader(parameters, main) {
         this.parameters = parameters || [];
-        this.main = main;
+        this.main = main || '';
         this.isCompiled = false;
     }
 

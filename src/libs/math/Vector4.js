@@ -1,26 +1,15 @@
 import { Vector2 } from "./Vector2";
 import { Vector3 } from "./Vector3";
 
-export class Vector4 {
+export class Vector4  extends Float32Array{
     constructor(x, y, z, w) {
-        this.values = new Float32Array(4);
+        super(4);
         if (typeof x !== 'undefined') {
             if (Number.isFinite(y) && Number.isFinite(z) && Number.isFinite(w)) {
-                x = [x, y, z]
+                x = [x, y, z, w]
             }
-            this.setTo(x);
+            this.set(x);
         }
-    }
-
-    setTo(vector) {
-        const values = vector.constructor === Vector4 ? vector.values : vector;
-
-        this.values[0] = values[0];
-        this.values[1] = values[1];
-        this.values[2] = values[2];
-        this.values[3] = values[3];
-
-        return this;
     }
 
     add(vector) {

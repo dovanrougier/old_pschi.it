@@ -3,7 +3,6 @@ import { Camera } from "./Camera";
 
 export class PerspectiveCamera extends Camera {
     constructor(fovY, aspect, near, far) {
-        super();
         this.fovY = fovY;
         this.aspect = aspect;
         this.near = near;

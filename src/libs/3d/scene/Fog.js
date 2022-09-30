@@ -1,7 +1,8 @@
+import { Vector2 } from "../../math/Vector2";
+
 export class Fog {
     constructor(near, far, color) {
-        this.near = near;
-        this.far = far;
+        this.distance = new Vector2(near, far);
         this.color = color;
     }
 }

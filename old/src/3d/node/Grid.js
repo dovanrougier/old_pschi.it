@@ -1,4 +1,5 @@
 import { Vector4 } from "../../math/Vector4";
+import { Color } from "../Color";
 import { Plane } from "../geometry/Plane";
 import { Node3D } from "../Node3D";
 
@@ -11,6 +12,8 @@ export class Grid extends Node3D {
         this.heightSegment = heightSegment;
         
         this.geometry = new Plane(width,height);
-        this.color = new Vector4(0,0,0,1);
+        this.color = new Color(0,0,0,1);
+
+        this.instancesPosition
     }
 }

@@ -4,10 +4,10 @@ import { NodeError } from '../core/error/node/NodeError';
 export class HtmlNode extends Node {
     constructor(type, options) {
         super();
-        
+
         this.element = document.createElement(type);
         this.element.id = this.id;
-        
+
         if (options) {
             if (options.title) {
                 this.element.title = options.title;
@@ -46,6 +46,32 @@ export class HtmlNode extends Node {
                 this.element.onmousedown = options.onmousedown;
             }
         }
+
+        this.addEventListener(Node.event.nodeInserted, (e) => {
+            if (e.child.element) {
+                this.element.appendChild(e.child.element);
+            }
+        });
+        this.addEventListener(Node.event.nodeRemoved, (e) => {
+            if (e.child.element) {
+                e.child.element.remove();
+            }
+        });
+    }
+
+    getAspectRatio() {
+        return this.element.width / this.element.height;
+    }
+
+    resize(width, height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    fitParent() {
+        if (this.parent.element) {
+            this.resize(this.parent.element.clientWidth, this.parent.element.clientHeight);
+        }
     }
 
     get width() {
@@ -64,46 +90,26 @@ export class HtmlNode extends Node {
         this.element.height = value;
     }
 
-    appendChild(child) {
-        if (arguments.length > 1) {
-            return Node.repeatFunction(arguments, this.appendChild.bind(this));
-        }
-        if (!child) {
-            throw new NodeError(this, `Cannot appendChild ${child}`);
-        }
+    validateType(child) {
         if (!child.constructor.name === HtmlNode) {
-            throw new NodeError(this, `${child.constructor.name} is not a HtmlNode.`);
+            return new NodeError(this, `${child.constructor.name} can't be child of ${this.constructor.name}.`);
         }
-        const result = super.appendChild(child);
-        if (result) {
-            this.element.appendChild(child.element);
-        }
-        return result;
-    }
-
-    removeChild(child) {
-        if (arguments.length > 1) {
-            return Node.repeatFunction(arguments, this.removeChild.bind(this));
-        }
-        if (!child) {
-            throw new NodeError(this, `Cannot removeChild ${child}`);
-        }
-        if (!child.constructor.name === HtmlNode) {
-            throw new NodeError(this, `${child.constructor.name} is not a HtmlNode.`);
-        }
-        const result = super.removeChild(child);
-        if (result) {
-            child.element.remove();
-        }
-        return result;
+        return null;
     }
 
     remove() {
         return this.parent.removeChild(this);
     }
 
-    appendToHtmlElement(htmlElement) {
-        htmlElement.appendChild(this.element);
+    appendToBody() {
+        if (this.parent) {
+            if (this.parent.constructor.name === HtmlNode) {
+                return this.parent.appendToBody();
+            }
+            this.parent.removeChild(this);
+        }
+        this.parent = { element: document.body }
+        document.body.appendChild(this.element);
     }
 
     setPointerCapture(pointerId) {
@@ -120,5 +126,15 @@ export class HtmlNode extends Node {
         if (this.element.requestPointerLock) {
             this.element.requestPointerLock();
         }
+    }
+
+    static setDocument(){
+        document.documentElement.style.height = '100%';
+        document.documentElement.style.width = '100%';
+        document.documentElement.style.margin = '0';
+
+        document.body.style.height = '100%';
+        document.body.style.width = '100%';
+        document.body.style.margin = '0';
     }
 }
