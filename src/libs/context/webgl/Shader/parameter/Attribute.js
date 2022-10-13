@@ -1,22 +1,22 @@
 import { Parameter } from './Parameter';
 
-export class Attribute extends Parameter{
-    constructor(type, name){
+export class Attribute extends Parameter {
+    constructor(type, name) {
         super(type, name);
     }
 
-    saveLocation(/** @type {WebGLRenderingContext} */gl, program){
-        if(this.location){
+    saveLocation(/** @type {WebGLRenderingContext} */gl, program) {
+        if (this.location) {
             return this.location;
         }
         return this.location = gl.getAttribLocation(program, this.name);
     }
 
-    setValue(/** @type {WebGLRenderingContext} */gl, value){
-        if(!Array.isArray(value)){
+    setValue(/** @type {WebGLRenderingContext} */gl, value) {
+        if (!Array.isArray(value)) {
             return gl.vertexAttrib1f(this.location, value);
         }
-        switch(value.length){
+        switch (value.length) {
             case 1:
                 return gl.vertexAttrib1fv(this.location, value);
             case 2:
@@ -30,22 +30,18 @@ export class Attribute extends Parameter{
         }
     }
 
-    enableBuffer(/** @type {WebGLRenderingContext} */gl, buffer, size, type, normalized, stride, offset){
-        this.buffer = buffer;
-        buffer.bind(gl);
+    enableVertexAttribArray(/** @type {WebGLRenderingContext} */gl, size, type, normalized, stride, offset) {
         gl.vertexAttribPointer(this.location, size, type, normalized, stride, offset);
         gl.enableVertexAttribArray(this.location);
         return this;
     }
 
-    deleteBuffer(/** @type {WebGLRenderingContext} */gl){
-        this.buffer.delete(gl);
-        this.buffer = null;
+    disableVertexAttribArray(/** @type {WebGLRenderingContext} */gl) {
         gl.disableVertexAttribArray(this.location);
         return this;
     }
 
-    getDeclaration(){
+    getDeclaration() {
         return `attribute ${this.type} ${this.name};`
     }
 }

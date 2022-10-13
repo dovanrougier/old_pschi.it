@@ -1,5 +1,5 @@
 import { NodeError } from "./error/node/NodeError";
-import { NodeEvent } from "./event/NodeEvent";
+import { NodeEvent } from "./event/node/NodeEvent";
 import { Uuid } from "./Uuid";
 
 export class Node extends EventTarget {
@@ -10,6 +10,7 @@ export class Node extends EventTarget {
         this.parent = null;
         this.children = [];
         this.visible = true;
+        this.updated = {};
     }
 
     validateType(child) {

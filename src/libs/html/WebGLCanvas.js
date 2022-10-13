@@ -1,6 +1,6 @@
 import { Scene } from "../3d/scene/Scene";
 import { NodeError } from "../core/error/node/NodeError";
-import { Context } from "../context/webgl/Context";
+import { WebGLContext } from "../context/webgl/WebGLContext";
 import { Canvas } from "./Canvas";
 import { Node } from "../core/Node";
 
@@ -8,7 +8,7 @@ export class WebGLCanvas extends Canvas {
     constructor(canvasOptions, contextOptions) {
         super(canvasOptions);
 
-        this.context = new Context(this.element.getContext('webgl', contextOptions) || this.element.getContext('experimental-webgl', contextOptions));
+        this.context = new WebGLContext(this.element.getContext('webgl', contextOptions) || this.element.getContext('experimental-webgl', contextOptions));
         if (!this.context) {
             this.element.innerText = 'WebGL is not supported.'
         }

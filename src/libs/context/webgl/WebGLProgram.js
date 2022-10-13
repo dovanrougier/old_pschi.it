@@ -1,4 +1,4 @@
-export class Program {
+export class WebGLProgram {
     constructor(/** @type {WebGLRenderingContext} */gl) {
         this.gl = gl;
         this.vertexShader = null;

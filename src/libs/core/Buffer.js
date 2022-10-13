@@ -1,7 +1,7 @@
 import { Vector2 } from "../math/Vector2";
 import { Vector3 } from "../math/Vector3";
 import { Vector4 } from "../math/Vector4";
-import { NodeEvent } from "./event/NodeEvent";
+import { NodeEvent } from "./event/node/NodeEvent";
 import { Node } from "./Node";
 
 export class Buffer extends Node {
@@ -9,14 +9,7 @@ export class Buffer extends Node {
         super();
         this.data = [];
         this.setUsage(usage);
-    }
-
-    [Symbol.iterator]() {
-        return this.data;
-    }
-
-    next() {
-        return this.data.next();
+        this.index = [];
     }
 
     get length() {
@@ -35,7 +28,26 @@ export class Buffer extends Node {
         this.data.set(array, offset);
     }
 
-    update(data, index, vectorLength = 1, stride = 0, offset = 0) {
+    indexOf(id, bufferLength) {
+        let i = 0;
+        let result = 0;
+        while (i < this.index.length) {
+            const tuple = this.index[i++];
+            if (tuple[0] == id) {
+                if (tuple[1] != bufferLength) {
+                    this.extend(index, tuple[1], bufferLength);
+                    tuple[1] = bufferLength;
+                }
+                return result;
+            }
+            result += tuple[1];
+        }
+        this.index.push([id, bufferLength]);
+        this.extend(result, 0, bufferLength);
+        return result;
+    }
+
+    update(data, index, vectorLength = 1, stride = 1, offset = 0) {
         let i = 0;
         for (let j = index + offset; j < this.length; j += stride) {
             for (let k = 0; k < vectorLength; k++) {
@@ -45,7 +57,7 @@ export class Buffer extends Node {
                 }
             }
         }
-        this.dispatchEvent(new NodeEvent(Buffer.event.bufferUpdate));
+        this.dispatchEvent(new NodeEvent(Buffer.event.bufferUpdated));
     }
 
     transform(matrix, index, vectorLength, stride, offset = 0) {
@@ -56,25 +68,34 @@ export class Buffer extends Node {
             for (let j = 0; j < vectorLength; j++) {
                 vector[j] = this.data[i + j];
             }
-            this.update(vector.transform(matrix), i, vectorLength, stride);
+            this.updated(vector.transform(matrix), i, vectorLength, stride);
             for (let j = 0; j < vectorLength; j++) {
                 this.data[i + j] = vector[j];
             }
         }
-        this.dispatchEvent(new NodeEvent(Buffer.event.bufferUpdate));
+        this.dispatchEvent(new NodeEvent(Buffer.event.bufferUpdated));
+    }
+
+    extend(index, oldLength, newLength) {
+        var newData = new this.data.constructor(this.data.length + newLength - oldLength);
+        if (this.data.length > 0) {
+            newData.set(this.data.slice(0, index + oldLength));
+            newData.set(this.data.slice(index + oldLength, this.data.length), index + newLength);
+        }
+        this.data = newData;
     }
 
     concat(data) {
-        const result = this.constructor(this.length + data.length, this.usage);
+        const result = new this.constructor(this.length + data.length, this.usage);
 
         result.set(this.data);
-        result.set(data, old.length);
+        result.set(data, this.data.length);
 
         return result;
     }
 
     static event = {
-        bufferUpdate: 'buffer-update',
+        bufferUpdated: 'buffer-updated',
     }
 
     static usage = {

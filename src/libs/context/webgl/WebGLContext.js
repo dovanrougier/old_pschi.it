@@ -1,14 +1,15 @@
-import { Buffer } from "./Buffer";
-import { Box } from "../../3d/object/Box";
+import { WebGLBuffer } from "./WebGLBuffer";
 import { DefaultProgram } from "./Program/DefaultProgram";
 import { Node } from "../../core/Node";
-import { Camera } from "../../3d/camera/Camera";
 import { PerspectiveCamera } from "../../3d/camera/PerspectiveCamera";
 import { AmbientLight } from "../../3d/light/AmbientLight";
 import { DirectionalLight } from "../../3d/light/DirectionalLight";
 import { Matrix4 } from "../../math/Matrix4";
+import { Geometry3D } from "../../3d/geometry/Geometry3D";
+import { Color } from "../../core/Color";
+import { Float32Buffer, Buffer } from "../../core/Buffer";
 
-export class Context {
+export class WebGLContext {
     constructor(/** @type {WebGLRenderingContext} */ gl) {
         this.gl = gl;
     }
@@ -22,14 +23,15 @@ export class Context {
         }
         this.program.use();
 
+        this.webGLBuffer = new WebGLBuffer(this.gl, this.gl.ARRAY_BUFFER);
+        this.buffer = new Float32Buffer(0);
+
+        this.webGLBuffer.bind(this.gl);
+        this.enableVertexAttribArray();
+
         this.program.uFogColor.setValue(this.gl, scene.fog.color);
         this.program.uFogDistance.setValue(this.gl, scene.fog.distance);
         this.program.uClicked.setValue(this.gl, 0);
-
-        this.buffer = new Buffer(this.gl, this.gl.ARRAY_BUFFER);
-        this.program.aVertexPosition.enableBuffer(this.gl, this.buffer, Box.vertexLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * Box.stride, 0);
-        this.program.aVertexNormal.enableBuffer(this.gl, this.buffer, Box.normalLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * Box.stride, Float32Array.BYTES_PER_ELEMENT * Box.vertexLength);
-        this.program.aVertexColor.enableBuffer(this.gl, this.buffer, Box.colorLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * Box.stride, Float32Array.BYTES_PER_ELEMENT * (Box.vertexLength + Box.normalLength));
 
         scene.children.forEach(this.initNode3D.bind(this));
 
@@ -41,15 +43,15 @@ export class Context {
         });
     }
 
-    initNode3D(node) {
-        if (node.constructor === Box) {
-            const buffer = node.buffer;
-            this.buffer.setData(this.gl, buffer.data, buffer.usage);
+    enableVertexAttribArray() {
+        const stride = Geometry3D.vertexLength + Geometry3D.normalLength + Color.length;
+        this.program.aVertexPosition.enableVertexAttribArray(this.gl, Geometry3D.vertexLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, 0);
+        this.program.aVertexNormal.enableVertexAttribArray(this.gl, Geometry3D.normalLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, Float32Array.BYTES_PER_ELEMENT * Geometry3D.vertexLength);
+        this.program.aVertexColor.enableVertexAttribArray(this.gl, Color.length, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, Float32Array.BYTES_PER_ELEMENT * (Geometry3D.vertexLength + Geometry3D.normalLength));
+    }
 
-            buffer.addEventListener('buffer-update', e => {
-                this.buffer.setData(this.gl, e.target.data, e.target.usage);
-            });
-        } else if (node.constructor === PerspectiveCamera) {
+    initNode3D(node) {
+        if (node.constructor === PerspectiveCamera) {
             this.program.uViewMatrix.setValue(this.gl, node.projectionMatrix);
         } else if (node.constructor === AmbientLight) {
             this.program.uAmbientLight.setValue(this.gl, node.color);
@@ -57,6 +59,7 @@ export class Context {
             this.program.uLightColor.setValue(this.gl, node.color);
             this.program.uLightPosition.setValue(this.gl, node.position);
         }
+        node.children.forEach(this.initNode3D.bind(this));
     }
 
     draw(scene) {
@@ -66,13 +69,18 @@ export class Context {
     }
 
     drawNode(node) {
-        if (node.constructor === Box) {
+        if (node.drawMode) {
+            if (node.updateBuffer(this.buffer)) {
+                this.webGLBuffer.setData(this.gl, this.buffer.data, this.buffer.usage);
+            }
+
             this.program.uVertexMatrix.setValue(this.gl, node.matrix);
-    
+
             const normalMatrix = new Matrix4(node.matrix).invertMatrix().transpose();
             this.program.uNormalMatrix.setValue(this.gl, normalMatrix);
-            this.drawArrays(this.gl[Box.drawMode], 0, Box.drawCount);
+            this.drawArrays(this.gl[node.drawMode], node.drawIndex, node.drawCount);
         }
+        node.children.forEach(this.drawNode.bind(this));
     }
 
     viewport(x, y, width, height) {

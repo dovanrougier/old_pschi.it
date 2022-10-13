@@ -1,11 +1,11 @@
-import { Program } from "../Program";
-import { FragmentShader } from "../Shader/FragmentShader";
-import { Attribute } from "../Shader/parameter/Attribute";
-import { Uniform } from "../Shader/parameter/Uniform";
-import { Varying } from "../Shader/parameter/Varying";
-import { VertexShader } from "../Shader/VertexShader";
+import { FragmentShader } from "../shader/FragmentShader";
+import { Attribute } from "../shader/parameter/Attribute";
+import { Uniform } from "../shader/parameter/Uniform";
+import { Varying } from "../shader/parameter/Varying";
+import { VertexShader } from "../shader/VertexShader";
+import { WebGLProgram } from "../WebGLProgram";
 
-export class DefaultProgram extends Program {
+export class DefaultProgram extends WebGLProgram {
     constructor(/** @type {WebGLRenderingContext} */gl) {
         super(gl);
         this.createShader();
@@ -51,7 +51,7 @@ export class DefaultProgram extends Program {
         this.uFogDistance = new Uniform('vec2', 'u_FogDist');
 
         this.fragmentShader = new FragmentShader(
-            'highp',
+            'mediump',
             [
                 this.uLightColor, this.uLightPosition, this.uAmbientLight, this.uClicked, this.uFogColor, this.uFogDistance,
                 this.vVertexColor, this.vVertexNormal, this.vVertexPosition, this.vDistance,

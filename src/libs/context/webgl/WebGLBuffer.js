@@ -1,4 +1,4 @@
-export class Buffer {
+export class WebGLBuffer {
     static binded = null;
     constructor(gl, type){
         this.type = type;
@@ -15,14 +15,15 @@ export class Buffer {
     }
 
     bind(/** @type {WebGLRenderingContext} */gl){
-        if(Buffer.binded != this){
+        if(WebGLBuffer.binded != this){
             gl.bindBuffer(this.type, this.buffer);
-            Buffer.binded = this;
+            WebGLBuffer.binded = this;
         }
     }
 
     setData(/** @type {WebGLRenderingContext} */gl, bufferData, usage) {
         this.bind(gl);
+        console.log(bufferData);
         gl.bufferData(this.type, bufferData, gl[usage]);
     }
 
