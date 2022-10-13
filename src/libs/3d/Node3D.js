@@ -55,6 +55,23 @@ export class Node3D extends Node {
         this.matrix.multiply(matrix);
     }
 
+    updateBuffer(buffer) {
+        let result = false;
+        if (this.updated.bufferLength) {
+            this.bufferIndex = buffer.indexOf(this.id, this.bufferLength);
+            this.drawIndex = this.bufferIndex / this.stride;
+            this.updated.bufferLength = false;
+            this.updated.vertex = true;
+            this.updated.normal = true;
+            this.updated.color = true;
+            result = true;
+        }
+        result = this.updateVertex(buffer) || result;
+        result = this.updateNormal(buffer) || result;
+        result = this.updateColor(buffer) || result;
+        return result;
+    }
+
     static defaultUp() {
         return Vector3._yAxis;
     }
