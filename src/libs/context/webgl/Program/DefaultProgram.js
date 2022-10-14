@@ -51,7 +51,7 @@ export class DefaultProgram extends WebGLProgram {
         this.uFogDistance = new Uniform('vec2', 'u_FogDist');
 
         this.fragmentShader = new FragmentShader(
-            'mediump',
+            'highp',
             [
                 this.uLightColor, this.uLightPosition, this.uAmbientLight, this.uClicked, this.uFogColor, this.uFogDistance,
                 this.vVertexColor, this.vVertexNormal, this.vVertexPosition, this.vDistance,

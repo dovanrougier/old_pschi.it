@@ -44,10 +44,10 @@ export class WebGLContext {
     }
 
     enableVertexAttribArray() {
-        const stride = Geometry3D.vertexLength + Geometry3D.normalLength + Color.length;
-        this.program.aVertexPosition.enableVertexAttribArray(this.gl, Geometry3D.vertexLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, 0);
-        this.program.aVertexNormal.enableVertexAttribArray(this.gl, Geometry3D.normalLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, Float32Array.BYTES_PER_ELEMENT * Geometry3D.vertexLength);
-        this.program.aVertexColor.enableVertexAttribArray(this.gl, Color.length, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, Float32Array.BYTES_PER_ELEMENT * (Geometry3D.vertexLength + Geometry3D.normalLength));
+        const stride = Geometry3D.vertexPositionLength + Geometry3D.vertexNormalLength + Color.length;
+        this.program.aVertexPosition.enableVertexAttribArray(this.gl, Geometry3D.vertexPositionLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, 0);
+        this.program.aVertexNormal.enableVertexAttribArray(this.gl, Geometry3D.vertexNormalLength, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, Float32Array.BYTES_PER_ELEMENT * Geometry3D.vertexPositionLength);
+        this.program.aVertexColor.enableVertexAttribArray(this.gl, Color.length, this.gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * stride, Float32Array.BYTES_PER_ELEMENT * (Geometry3D.vertexPositionLength + Geometry3D.vertexNormalLength));
     }
 
     initNode3D(node) {
@@ -69,8 +69,8 @@ export class WebGLContext {
     }
 
     drawNode(node) {
-        if (node.drawMode) {
-            if (node.updateBuffer(this.buffer)) {
+        if (node.geometry) {
+            if (this.buffer.updateNodeData(node)) {
                 this.webGLBuffer.setData(this.gl, this.buffer.data, this.buffer.usage);
             }
 
@@ -78,7 +78,8 @@ export class WebGLContext {
 
             const normalMatrix = new Matrix4(node.matrix).invertMatrix().transpose();
             this.program.uNormalMatrix.setValue(this.gl, normalMatrix);
-            this.drawArrays(this.gl[node.drawMode], node.drawIndex, node.drawCount);
+
+            this.drawArrays(this.gl[node.geometry.vertexMode], node.geometry.vertexIndex, node.geometry.vertexCount);
         }
         node.children.forEach(this.drawNode.bind(this));
     }

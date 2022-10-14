@@ -1,106 +1,99 @@
 import { Geometry3D } from "./Geometry3D";
 
 export class Plane extends Geometry3D {
-    static vertexCount(drawMode) {
-        switch (drawMode) {
+    constructor(width, height, widthSegment, heightSegment, vertexMode = 'TRIANGLES') {
+        super();
+        this.width = width || 1;
+        this.height = height || 1;
+        this.widthSegment = widthSegment || this.width;
+        this.heightSegment = heightSegment || this.height;
+        this.instanceCount = (this.width / this.widthSegment) * (this.height / this.heightSegment);
+
+        this.updated.vertexPosition = true;
+        this.updated.vertexNormal = true;
+        this.updated.vertexColor = true;
+
+        this.vertexMode = vertexMode;
+    }
+
+    get vertexCount() {
+        switch (this.vertexMode) {
             case 'TRIANGLES':
             default:
-                return 6;
+                return this.instanceCount * 6;
         }
     }
 
-    static updateVertexArray(array, index, offset, stride, x, y, width, height, drawMode){
-        x -= width / 2;
-        y -= height / 2;
-        const xw = x + width;
-        const yh = y + height;
+    get vertexPosition() {
+        //center the origin
+        const result = new Float32Array(this.vertexPositionLength * this.vertexCount);
+        const z = 0;
+        let i = 0,
+            x = -this.width / 2,
+            y = -this.height / 2;
+        do {
+            const xw = x + this.widthSegment,
+                yh = y + this.heightSegment;
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = z;
 
-        index += offset;
-        
-        switch (drawMode) {
-            case 'TRIANGLES':
-            default:
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = 0;
-                index += stride - 2;
-                
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = 0;
-                index += stride - 2;
-                
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = 0;
-                index += stride - 2;
-                
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = 0;
-                index += stride - 2;
-                
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = 0;
-                index += stride - 2;
-                
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = 0;
-        }
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = z;
+
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = z;
+
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = z;
+
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = z;
+
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = z;
+
+            x += this.widthSegment;
+            if (x >= this.width / 2) {
+                x = -this.width / 2;
+                y += this.heightSegment;
+            }
+
+        } while (i < result.length);
+
+        this.updated.vertexPosition = false;
+        return result;
     }
 
-    static updateNormalArray(array, index, offset, stride, drawMode){
-        index += offset;
-        
-        switch (drawMode) {
-            case 'TRIANGLES':
-            default:
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = -1;
-                index += stride - 2;
-                
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = -1;
-                index += stride - 2;
-                
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = -1;
-                index += stride - 2;
-                
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = -1;
-                index += stride - 2;
-                
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = -1;
-                index += stride - 2;
-                
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = -1;
-        }
+    get vertexNormal() {
+        const result = new Float32Array(this.vertexNormalLength * this.vertexCount);
+        let i = 0;
+        do {
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+        } while (i < result.length)
+
+        this.updated.vertexNormal = false;
+        return result;
     }
 
-    static updateColorArray(array, index, offset, stride, color, drawMode){
-        index += offset;
-        
-        switch (drawMode) {
-            case 'TRIANGLES':
-            default:
-                for(let i = 0; i < 6; i++){
-                    array[index++] = color[0];
-                    array[index++] = color[1];
-                    array[index++] = color[2];
-                    array[index] = color[3];
-                    index += stride - 3;
-                }
-        }
+    get vertexColor() {
+        const color = this.material.color;
+        const result = new Float32Array(this.vertexColorLength * this.vertexCount);
+        let i = 0;
+        do {
+            for (let j = 0; j < this.vertexColorLength; j++) {
+                result[i++] = color[j];
+            }
+        } while (i < result.length);
+
+        this.updated.vertexColor = false;
+        return result;
     }
 }

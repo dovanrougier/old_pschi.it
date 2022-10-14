@@ -11,11 +11,17 @@ export class Node3D extends Node {
         this.scale = new Vector3(1, 1, 1);
 
         this.matrix = Matrix4.identityMatrix();
-        this.matrixWorld = Matrix4.identityMatrix();
+        //this.matrixWorld = Matrix4.identityMatrix();
+
+        this.geometry = null;
+    }
+
+    get matrixWorld(){
+        return this.parent.matrix || Matrix4.identityMatrix();
     }
 
     translate(x, y, z) {
-        if(Array.isArray(x)){
+        if (Array.isArray(x)) {
             z = x[2];
             y = x[1];
             x = x[0];
@@ -24,7 +30,7 @@ export class Node3D extends Node {
     }
 
     scale(x, y, z) {
-        if(Array.isArray(x)){
+        if (Array.isArray(x)) {
             z = x[2];
             y = x[1];
             x = x[0];
@@ -33,7 +39,7 @@ export class Node3D extends Node {
     }
 
     rotate(radians, x, y, z) {
-        if(Array.isArray(x)){
+        if (Array.isArray(x)) {
             z = x[2];
             y = x[1];
             x = x[0];
@@ -42,7 +48,7 @@ export class Node3D extends Node {
     }
 
     lookAt(x, y, z) {
-        if(Array.isArray(x)){
+        if (Array.isArray(x)) {
             z = x[2];
             y = x[1];
             x = x[0];

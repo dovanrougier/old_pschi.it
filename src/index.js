@@ -1,8 +1,9 @@
 import { PerspectiveCamera } from './libs/3d/camera/PerspectiveCamera';
+import { Cube } from './libs/3d/geometry/Cube';
+import { Plane } from './libs/3d/geometry/Plane';
 import { AmbientLight } from './libs/3d/light/AmbientLight';
 import { DirectionalLight } from './libs/3d/light/DirectionalLight';
-import { Box } from './libs/3d/object/Box';
-import { Grid } from './libs/3d/object/Grid';
+import { Node3D } from './libs/3d/Node3D';
 import { Fog } from './libs/3d/scene/Fog';
 import { Scene } from './libs/3d/scene/Scene';
 import { HtmlNode } from './libs/html/HtmlNode';
@@ -35,22 +36,18 @@ scene.appendChild(ambientLight);
 const pointLight = new DirectionalLight(new Vector3(1, 1, 1), 1, [0, 5, -5]);
 scene.appendChild(pointLight);
 
-const box = new Box(2,2,2);
-box.translate(-2, 0, -5);
-scene.appendChild(box);
+const node3d = new Node3D();
+node3d.geometry = new Cube();
+node3d.translate(0, 0, -5);
 
-const grid = new Grid(2,2);
-grid.translate(2, 0, -5);
-scene.appendChild(grid);
+scene.appendChild(node3d);
 
 canvas.appendChild(scene);
 
 requestAnimationFrame(start);
 
 function start(now) {
-    box.rotate(0.01, 1, 1, 1);
-    grid.rotate(-0.01, 1, 1, 1);
+    node3d.rotate(0.01, 1,1,1);
     canvas.draw();
     requestAnimationFrame(start);
 }
-

@@ -1,529 +1,543 @@
 import { Geometry3D } from "./Geometry3D";
 
 export class Cube extends Geometry3D {
-    static vertexCount(drawMode) {
-        switch (drawMode) {
+    constructor(width, height, depth, widthSegment, heightSegment, depthSegment, vertexMode = 'TRIANGLES') {
+        super();
+        this.width = width || 1;
+        this.height = height || 1;
+        this.depth = depth || 1;
+        this.widthSegment = widthSegment || this.width;
+        this.heightSegment = heightSegment || this.height;
+        this.depthSegment = depthSegment || this.depth;
+        this.instanceCount = (this.width / this.widthSegment) * (this.height / this.heightSegment) * (this.depth / this.depthSegment);
+
+        this.updated.vertexPosition = true;
+        this.updated.vertexNormal = true;
+        this.updated.vertexColor = true;
+
+        this.vertexMode = vertexMode;
+    }
+
+    get vertexCount() {
+        switch (this.vertexMode) {
             case 'TRIANGLES':
             default:
-                return 36;
+                return this.instanceCount * 36;
         }
     }
 
-    static updateVertexArray(array, index, offset, stride, x, y, z, width, height, depth, drawMode) {
-        x -= width / 2;
-        y -= height / 2;
-        z -= depth / 2;
-        const xw = x + width,
-            yh = y + height,
-            zd = z + depth;
+    get vertexPosition() {
+        //center the origin
+        const result = new Float32Array(this.vertexPositionLength * this.vertexCount);
+        let i = 0,
+            x = -this.width / 2,
+            y = -this.height / 2,
+            z = -this.depth / 2;
+        do {
+            const xw = x + this.widthSegment,
+                yh = y + this.heightSegment,
+                zd = z + this.depthSegment;
+            //front
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = z;
 
-        index += offset;
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = z;
 
-        switch (drawMode) {
-            case 'TRIANGLES':
-            default:
-                //front
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = z;
 
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = z;
 
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            //right
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                //right
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = zd;
 
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
+            //top
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                //top
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            //back
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = zd;
 
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                //back
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = zd;
 
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = zd;
 
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                array[index++] = xw;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
+            //left
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = zd;
 
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
-                //left
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = z;
 
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = zd;
 
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = zd;
 
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = yh;
+            result[i++] = z;
 
-                array[index++] = x;
-                array[index++] = yh;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = z;
 
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
-                //bottom
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
+            //bottom
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = z;
 
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = zd;
 
-                array[index++] = x;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
+            result[i++] = x;
+            result[i++] = y;
+            result[i++] = zd;
 
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = z;
-                index += stride - 2;
+            result[i++] = xw;
+            result[i++] = y;
+            result[i++] = z;
 
-                array[index++] = xw;
-                array[index++] = y;
-                array[index] = zd;
-                index += stride - 2;
-        }
+            result[i++] = xw;
+            result[i++] = yh;
+            result[i++] = zd;
+
+            x += this.widthSegment;
+            if (x >= this.width / 2) {
+                x = -this.width / 2;
+                y += this.heightSegment;
+                if (y >= this.height / 2) {
+                    y = -this.height / 2;
+                    z += this.depthSegment;
+                }
+            }
+
+        } while (i < result.length);
+
+        this.updated.vertexPosition = false;
+        return result;
     }
 
-    static updateNormalArray(array, index, offset, stride, drawMode) {
-        index += offset;
+    get vertexNormal() {
+        const result = new Float32Array(this.vertexNormalLength * this.vertexCount);
+        let i = 0;
+        do {
+            //front
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
 
-        switch (drawMode) {
-            case 'TRIANGLES':
-            default:
-                //front
-                let x = 0,
-                    y = 0,
-                    z = -1;
-                for (let i = 0; i < 6; i++) {
-                    array[index++] = x;
-                    array[index++] = y;
-                    array[index] = z;
-                    index += stride - 2;
-                }
+            //right
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
 
-                //right
-                x = 1,
-                    y = 0,
-                    z = 0;
-                for (let i = 0; i < 6; i++) {
-                    array[index++] = x;
-                    array[index++] = y;
-                    array[index] = z;
-                    index += stride - 2;
-                }
+            //top
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            //back
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            //left
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            //bottom
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = -1;
+            result[i++] = 0;
 
-                //top
-                x = 0,
-                    y = 1,
-                    z = 0;
-                for (let i = 0; i < 6; i++) {
-                    array[index++] = x;
-                    array[index++] = y;
-                    array[index] = z;
-                    index += stride - 2;
-                }
+        } while (i < result.length)
 
-                //back
-                x = 0,
-                    y = 0,
-                    z = 1;
-                for (let i = 0; i < 6; i++) {
-                    array[index++] = x;
-                    array[index++] = y;
-                    array[index] = z;
-                    index += stride - 2;
-                }
 
-                //left
-                x = -1,
-                    y = 0,
-                    z = 0;
-                for (let i = 0; i < 6; i++) {
-                    array[index++] = x;
-                    array[index++] = y;
-                    array[index] = z;
-                    index += stride - 2;
-                }
-
-                //bottom
-                x = 0,
-                    y = -1,
-                    z = 0;
-                for (let i = 0; i < 6; i++) {
-                    array[index++] = x;
-                    array[index++] = y;
-                    array[index] = z;
-                    index += stride - 2;
-                }
-        }
+        this.updated.vertexNormal = false;
+        return result;
     }
 
-    static updateColorArray(array, index, offset, stride, color, drawMode) {
-        index += offset;
+    get vertexColor() {
+        const color = this.material.color;
+        const result = new Float32Array(this.vertexColorLength * this.vertexCount);
+        let i = 0;
+        do {
+            for (let j = 0; j < this.vertexColorLength; j++) {
+                result[i++] = color[j];
+            }
+        } while (i < result.length);
 
-        switch (drawMode) {
-            case 'TRIANGLES':
-            default:
-                for (let i = 0; i < 36; i++) {
-                    array[index++] = color[0];
-                    array[index++] = color[1];
-                    array[index++] = color[2];
-                    array[index] = color[3];
-                    index += stride - 3;
-                }
-        }
+        this.updated.vertexColor = false;
+        return result;
     }
 
-    static updateColorSpectrumArray(array, index, offset, stride, drawMode) {
-        index += offset;
+    get vertexSpectrumColor() {
+        //center the origin
+        const result = new Float32Array(this.vertexColorLength * this.vertexCount);
+        let i = 0;
+        do {
+            //front
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-        switch (drawMode) {
-            case 'TRIANGLES':
-            default:
-                //front
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            //right
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                //right
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 0
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            //top
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                //top
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            //back
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                //back
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            //left
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                //left
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
-                //bottom
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            //bottom
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 0;
-                array[index] = 1;
-                index += stride - 3;
+            result[i++] = 1;
+            result[i++] = 0;
+            result[i++] = 0;
+            result[i++] = 1;
 
-                array[index++] = 1;
-                array[index++] = 0;
-                array[index++] = 1;
-                array[index] = 1;
-                index += stride - 3;
-        }
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
+            result[i++] = 1;
+        } while (i < result.length);
+
+        this.updated.vertexColor = false;
+        return result;
     }
 }

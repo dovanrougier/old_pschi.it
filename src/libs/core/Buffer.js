@@ -20,31 +20,72 @@ export class Buffer extends Node {
         return this.data.BYTES_PER_ELEMENT;
     }
 
-    setUsage(usage = Buffer.usage.staticDraw) {
-        this.usage = usage;
-    }
-
-    set(array, offset) {
-        this.data.set(array, offset);
-    }
-
-    indexOf(id, bufferLength) {
+    getNodePosition(node) {
         let i = 0;
         let result = 0;
         while (i < this.index.length) {
             const tuple = this.index[i++];
-            if (tuple[0] == id) {
-                if (tuple[1] != bufferLength) {
-                    this.extend(index, tuple[1], bufferLength);
-                    tuple[1] = bufferLength;
+            if (tuple[0] == node.id) {
+                if (tuple[1] != node.geometry.bufferLength) {
+                    this.extend(index, tuple[1], node.geometry.bufferLength);
+                    node.geometry.bufferPosition = result;
+                    tuple[1] = node.geometry.bufferLength;
                 }
+                node.geometry.bufferPosition = result;
                 return result;
             }
             result += tuple[1];
         }
-        this.index.push([id, bufferLength]);
-        this.extend(result, 0, bufferLength);
+        this.index.push([node.id, node.geometry.bufferLength]);
+        this.extend(result, 0, node.geometry.bufferLength);
+        node.geometry.bufferPosition = result;
         return result;
+    }
+
+    getNodeData(node) {
+        const index = this.getNodePosition(node);
+        return this.slice(index, index + node.geometry.bufferLength);
+    }
+
+    updateNodeData(node) {
+        let index = -1;
+        let result = false;
+        if (node.geometry) {
+            if (node.geometry.updated.vertexPosition) {
+                if (index == -1) {
+                    index = this.getNodePosition(node);
+                }
+                this.update(node.geometry.vertexPosition, index, node.geometry.vertexPositionLength, node.geometry.stride, node.geometry.vertexPositionOffset);
+                result = true;
+            }
+            if (node.geometry.updated.vertexNormal) {
+                if (index == -1) {
+                    index = this.getNodePosition(node);
+                }
+                this.update(node.geometry.vertexNormal, index, node.geometry.vertexNormalLength, node.geometry.stride, node.geometry.vertexNormalOffset);
+                result = true;
+            }
+            if (node.geometry.updated.vertexColor) {
+                if (index == -1) {
+                    index = this.getNodePosition(node);
+                }
+                this.update(node.geometry.vertexColor, index, node.geometry.vertexColorLength, node.geometry.stride, node.geometry.vertexColorOffset);
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    setUsage(usage = Buffer.usage.staticDraw) {
+        this.usage = usage;
+    }
+
+    slice(start, end) {
+        this.data.slice(start, end);
+    }
+
+    set(array, offset) {
+        this.data.set(array, offset);
     }
 
     update(data, index, vectorLength = 1, stride = 1, offset = 0) {
