@@ -5,11 +5,23 @@ import { NodeEvent } from "./event/node/NodeEvent";
 import { Node } from "./Node";
 
 export class Buffer extends Node {
-    constructor(usage) {
+    constructor(index, usage) {
         super();
         this.data = [];
         this.setUsage(usage);
-        this.index = [];
+        this.nodes = [];
+        this.index = index;
+    }
+
+    get index() {
+        return this._index;
+    }
+
+    set index(value) {
+        this._index = value;
+        if (this._index) {
+            this.index.isIndex = true;
+        }
     }
 
     get length() {
@@ -20,59 +32,46 @@ export class Buffer extends Node {
         return this.data.BYTES_PER_ELEMENT;
     }
 
-    getNodePosition(node) {
+    getNodeIndexPosition(node) {
         let i = 0;
         let result = 0;
-        while (i < this.index.length) {
-            const tuple = this.index[i++];
+        const indexLength = node.indexLength;
+        while (i < this.index.nodes.length) {
+            const tuple = this.index.nodes[i++];
             if (tuple[0] == node.id) {
-                if (tuple[1] != node.geometry.bufferLength) {
-                    this.extend(index, tuple[1], node.geometry.bufferLength);
-                    node.geometry.bufferPosition = result;
-                    tuple[1] = node.geometry.bufferLength;
+                if (tuple[1] != indexLength) {
+                    this.index.extend(index, tuple[1], indexLength);
+                    tuple[1] = indexLength;
                 }
-                node.geometry.bufferPosition = result;
+                node.indexBufferPosition = result;
                 return result;
             }
             result += tuple[1];
         }
-        this.index.push([node.id, node.geometry.bufferLength]);
-        this.extend(result, 0, node.geometry.bufferLength);
-        node.geometry.bufferPosition = result;
+        this.index.nodes.push([node.id, indexLength]);
+        this.index.extend(result, 0, indexLength);
+        node.indexBufferPosition = result;
         return result;
     }
 
-    getNodeData(node) {
-        const index = this.getNodePosition(node);
-        return this.slice(index, index + node.geometry.bufferLength);
-    }
-
-    updateNodeData(node) {
-        let index = -1;
-        let result = false;
-        if (node.geometry) {
-            if (node.geometry.updated.vertexPosition) {
-                if (index == -1) {
-                    index = this.getNodePosition(node);
+    getNodePosition(node) {
+        let i = 0;
+        let result = 0;
+        while (i < this.nodes.length) {
+            const tuple = this.nodes[i++];
+            if (tuple[0] == node.id) {
+                if (tuple[1] != node.bufferLength) {
+                    this.extend(index, tuple[1], node.bufferLength);
+                    tuple[1] = node.bufferLength;
                 }
-                this.update(node.geometry.vertexPosition, index, node.geometry.vertexPositionLength, node.geometry.stride, node.geometry.vertexPositionOffset);
-                result = true;
+                node.bufferPosition = result;
+                return result;
             }
-            if (node.geometry.updated.vertexNormal) {
-                if (index == -1) {
-                    index = this.getNodePosition(node);
-                }
-                this.update(node.geometry.vertexNormal, index, node.geometry.vertexNormalLength, node.geometry.stride, node.geometry.vertexNormalOffset);
-                result = true;
-            }
-            if (node.geometry.updated.vertexColor) {
-                if (index == -1) {
-                    index = this.getNodePosition(node);
-                }
-                this.update(node.geometry.vertexColor, index, node.geometry.vertexColorLength, node.geometry.stride, node.geometry.vertexColorOffset);
-                result = true;
-            }
+            result += tuple[1];
         }
+        this.nodes.push([node.id, node.bufferLength]);
+        this.extend(result, 0, node.bufferLength);
+        node.bufferPosition = result;
         return result;
     }
 
@@ -89,23 +88,34 @@ export class Buffer extends Node {
     }
 
     update(data, index, vectorLength = 1, stride = 1, offset = 0) {
+        if (index instanceof Node) {
+            index = this.getNodePosition(index);
+        }
         let i = 0;
         for (let j = index + offset; j < this.length; j += stride) {
             for (let k = 0; k < vectorLength; k++) {
                 this.data[j + k] = data[i++];
-                if (i > data.length) {
-                    return;
-                }
             }
         }
         this.dispatchEvent(new NodeEvent(Buffer.event.bufferUpdated));
     }
 
-    transform(matrix, index, vectorLength, stride, offset = 0) {
+    updateIndex(index, offset) {
+        if (offset instanceof Node) {
+            offset = this.getNodeIndexPosition(offset);
+        }
+        let j = offset;
+        for (let i = 0; i < index.length; i++) {
+            this.index.data[j++] = index[i] + offset;
+        }
+        this.dispatchEvent(new NodeEvent(Buffer.event.indexBufferUpdated));
+    }
+
+    transform(matrix, index, count, vectorLength, stride, offset = 0) {
         let vector = vectorLength == 4 ? new Vector4()
             : vectorLength == 3 ? new Vector3() :
                 new Vector2();
-        for (let i = index + offset; i < this.length; i += stride) {
+        for (let i = index + offset; i < count; i += stride) {
             for (let j = 0; j < vectorLength; j++) {
                 vector[j] = this.data[i + j];
             }
@@ -137,6 +147,7 @@ export class Buffer extends Node {
 
     static event = {
         bufferUpdated: 'buffer-updated',
+        indexBufferUpdated: 'index-buffer-updated',
     }
 
     static usage = {
@@ -195,64 +206,64 @@ export class Buffer extends Node {
 }
 
 export class Int8Buffer extends Buffer {
-    constructor(length, usage) {
-        super(usage)
+    constructor(length, index, usage) {
+        super(index, usage)
         this.data = new Int8Array(length);
     }
 }
 
 export class UInt8Buffer extends Buffer {
-    constructor(length, usage) {
-        super(usage)
+    constructor(length, index, usage) {
+        super(index, usage)
         this.data = new Uint8Array(length);
     }
 }
 
 export class Uint8ClampedBuffer extends Buffer {
-    constructor(length, usage) {
-        super(usage)
+    constructor(length, index, usage) {
+        super(index, usage)
         this.data = new Uint8ClampedArray(length);
     }
 }
 
 export class Int16Buffer extends Buffer {
-    constructor(length, usage) {
-        super(usage)
+    constructor(length, index, usage) {
+        super(index, usage)
         this.data = new Int16Array(length);
     }
 }
 
 export class UInt16Buffer extends Buffer {
-    constructor(length, usage) {
-        super(usage)
+    constructor(length, index, usage) {
+        super(index, usage)
         this.data = new Uint16Array(length);
     }
 }
 
 export class Uint32Buffer extends Buffer {
-    constructor(length, usage) {
-        super(usage)
+    constructor(length, index, usage) {
+        super(index, usage)
         this.data = new Uint32Array(length);
     }
 }
 
 export class Float16Buffer extends Buffer {
-    constructor(length, usage) {
-        super(usage)
+    constructor(length, index, usage) {
+        super(index, usage)
         this.data = new Float16Array(length);
     }
 }
 
 export class Float32Buffer extends Buffer {
-    constructor(length, usage) {
-        super(usage)
+    constructor(length, index, usage) {
+        super(index, usage)
         this.data = new Float32Array(length);
     }
 }
 
 export class Float64Buffer extends Buffer {
-    constructor(length, usage) {
-        super(usage);
+    constructor(length, index, usage) {
+        super(index, usage);
         this.data = new Float64Array(length);
     }
 }

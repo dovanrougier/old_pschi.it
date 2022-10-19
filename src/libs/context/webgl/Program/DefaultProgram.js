@@ -19,6 +19,7 @@ export class DefaultProgram extends WebGLProgram {
         this.uViewMatrix = new Uniform('mat4', 'u_ViewMatrix');
         this.uVertexMatrix = new Uniform('mat4', 'u_VertexMatrix');
         this.uNormalMatrix = new Uniform('mat4', 'u_NormalMatrix');
+        this.uPointSize = new Uniform('float', 'u_PointSize');
         this.uClicked = new Uniform('bool', 'u_Clicked');
 
         this.vVertexColor = new Varying('vec4', 'v_VertexColor');
@@ -29,10 +30,11 @@ export class DefaultProgram extends WebGLProgram {
         this.vertexShader = new VertexShader(
             [
                 this.aVertexPosition, this.aVertexColor, this.aVertexNormal,
-                this.uViewMatrix, , this.uVertexMatrix, this.uNormalMatrix, this.uClicked,
+                this.uViewMatrix, , this.uVertexMatrix, this.uNormalMatrix, this.uPointSize, this.uClicked,
                 this.vVertexColor, this.vVertexNormal, this.vVertexPosition, this.vDistance,
             ],
             [
+                `gl_PointSize = ${this.uPointSize};`,
                 `gl_Position = ${this.uViewMatrix} * ${this.uVertexMatrix} * ${this.aVertexPosition};`,
                 `${this.vVertexColor} = ${this.aVertexColor};`,
                 `if(${this.uClicked}) {`,

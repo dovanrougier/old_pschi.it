@@ -1,4 +1,3 @@
-import { WebGLBuffer } from "./WebGLBuffer";
 import { DefaultProgram } from "./Program/DefaultProgram";
 import { Node } from "../../core/Node";
 import { PerspectiveCamera } from "../../3d/camera/PerspectiveCamera";
@@ -7,11 +6,13 @@ import { DirectionalLight } from "../../3d/light/DirectionalLight";
 import { Matrix4 } from "../../math/Matrix4";
 import { Geometry3D } from "../../3d/geometry/Geometry3D";
 import { Color } from "../../core/Color";
-import { Float32Buffer, Buffer } from "../../core/Buffer";
+import { Float32Buffer, UInt16Buffer, Uint32Buffer } from "../../core/Buffer";
+import { WebGLElementBuffer } from "./WebGLElementBuffer";
 
 export class WebGLContext {
     constructor(/** @type {WebGLRenderingContext} */ gl) {
         this.gl = gl;
+        this.polyfillExtension();
     }
 
     init(scene) {
@@ -23,15 +24,15 @@ export class WebGLContext {
         }
         this.program.use();
 
-        this.webGLBuffer = new WebGLBuffer(this.gl, this.gl.ARRAY_BUFFER);
-        this.buffer = new Float32Buffer(0);
+        this.webGLBuffer = new WebGLElementBuffer(this.gl);
+
+        this.buffer = new Float32Buffer(0, new UInt16Buffer(0));
 
         this.webGLBuffer.bind(this.gl);
         this.enableVertexAttribArray();
 
-        this.program.uFogColor.setValue(this.gl, scene.fog.color);
+        this.program.uFogColor.setValue(this.gl, scene.fog.color.rgb);
         this.program.uFogDistance.setValue(this.gl, scene.fog.distance);
-        this.program.uClicked.setValue(this.gl, 0);
 
         scene.children.forEach(this.initNode3D.bind(this));
 
@@ -54,9 +55,9 @@ export class WebGLContext {
         if (node.constructor === PerspectiveCamera) {
             this.program.uViewMatrix.setValue(this.gl, node.projectionMatrix);
         } else if (node.constructor === AmbientLight) {
-            this.program.uAmbientLight.setValue(this.gl, node.color);
+            this.program.uAmbientLight.setValue(this.gl, node.color.rgb);
         } else if (node.constructor === DirectionalLight) {
-            this.program.uLightColor.setValue(this.gl, node.color);
+            this.program.uLightColor.setValue(this.gl, node.color.rgb);
             this.program.uLightPosition.setValue(this.gl, node.position);
         }
         node.children.forEach(this.initNode3D.bind(this));
@@ -70,8 +71,11 @@ export class WebGLContext {
 
     drawNode(node) {
         if (node.geometry) {
-            if (this.buffer.updateNodeData(node)) {
+            if (node.geometry.updateBuffer(this.buffer)) {
                 this.webGLBuffer.setData(this.gl, this.buffer.data, this.buffer.usage);
+            }
+            if (node.geometry.updateIndexBuffer(this.buffer)) {
+                this.webGLBuffer.setIndex(this.gl, this.buffer.index.data, this.buffer.usage);
             }
 
             this.program.uVertexMatrix.setValue(this.gl, node.matrix);
@@ -79,7 +83,17 @@ export class WebGLContext {
             const normalMatrix = new Matrix4(node.matrix).invertMatrix().transpose();
             this.program.uNormalMatrix.setValue(this.gl, normalMatrix);
 
-            this.drawArrays(this.gl[node.geometry.vertexMode], node.geometry.vertexIndex, node.geometry.vertexCount);
+            if (node.debug && this.program.uClicked.value != 1) {
+                this.program.uClicked.setValue(this.gl, 1);
+            } else if (!node.debug && this.program.uClicked.value != 0) {
+                this.program.uClicked.setValue(this.gl, 0);
+            }
+
+            const pointSize = node.geometry.material.pointSize;
+            if (this.program.uPointSize.value != pointSize) {
+                this.program.uPointSize.setValue(this.gl, pointSize);
+            }
+            this.drawElements(this.gl[node.geometry.vertexMode], node.geometry.indexLength, this.gl.UNSIGNED_SHORT, node.geometry.vertexIndex * this.buffer.index.BYTES_PER_ELEMENT);
         }
         node.children.forEach(this.drawNode.bind(this));
     }
@@ -119,9 +133,21 @@ export class WebGLContext {
         this.gl.clear(bits);
     }
 
+    drawElements(mode, count, type, offset) {
+        //console.log(count,offset);
+        this.gl.drawElements(mode, count, type, offset);
+
+        return this;
+    }
+
     drawArrays(drawMode, first, drawCount) {
         this.gl.drawArrays(drawMode, first, drawCount);
 
         return this;
+    }
+
+    polyfillExtension() {
+        this.extensions = this.gl.getSupportedExtensions().map(e => this.gl.getExtension(e));
+        console.log(this.extensions);
     }
 }

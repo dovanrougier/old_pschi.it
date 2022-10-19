@@ -1,9 +1,20 @@
+import { Vector3 } from "../math/Vector3";
 import { Vector4 } from "../math/Vector4";
 
 export class Color extends Vector4 {
     static length = 4;
     constructor(r = 0, g = 0, b = 0, a = 1) {
         super(r, g, b, a);
+    }
+
+    get rgb() {
+        return new Vector3(this[0], this[1], this[2]);
+    }
+
+    set rgb(value) {
+        this[0] = value[0];
+        this[1] = value[1];
+        this[2] = value[2];
     }
 
     get r() {

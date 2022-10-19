@@ -1,543 +1,197 @@
 import { Geometry3D } from "./Geometry3D";
 
 export class Cube extends Geometry3D {
-    constructor(width, height, depth, widthSegment, heightSegment, depthSegment, vertexMode = 'TRIANGLES') {
+    constructor(width, height, depth) {
         super();
         this.width = width || 1;
         this.height = height || 1;
         this.depth = depth || 1;
-        this.widthSegment = widthSegment || this.width;
-        this.heightSegment = heightSegment || this.height;
-        this.depthSegment = depthSegment || this.depth;
-        this.instanceCount = (this.width / this.widthSegment) * (this.height / this.heightSegment) * (this.depth / this.depthSegment);
 
-        this.updated.vertexPosition = true;
-        this.updated.vertexNormal = true;
-        this.updated.vertexColor = true;
-
-        this.vertexMode = vertexMode;
+        this.vertexCount = 24;
     }
 
-    get vertexCount() {
-        switch (this.vertexMode) {
-            case 'TRIANGLES':
-            default:
-                return this.instanceCount * 36;
+    get vertexMode() {
+        if(this.material.points){
+            return 'POINTS';
         }
+        if (this.material.wireframe) {
+            return 'LINES';
+        }
+        return 'TRIANGLES';
     }
 
-    get vertexPosition() {
-        //center the origin
-        const result = new Float32Array(this.vertexPositionLength * this.vertexCount);
-        let i = 0,
-            x = -this.width / 2,
-            y = -this.height / 2,
-            z = -this.depth / 2;
-        do {
-            const xw = x + this.widthSegment,
-                yh = y + this.heightSegment,
-                zd = z + this.depthSegment;
-            //front
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = z;
-
-            //right
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = zd;
-
-            //top
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            //back
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = zd;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = zd;
-
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = zd;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            //left
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = zd;
-
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = zd;
-
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = z;
-
-            //bottom
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = zd;
-
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = zd;
-
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = zd;
-
-            x += this.widthSegment;
-            if (x >= this.width / 2) {
-                x = -this.width / 2;
-                y += this.heightSegment;
-                if (y >= this.height / 2) {
-                    y = -this.height / 2;
-                    z += this.depthSegment;
-                }
-            }
-
-        } while (i < result.length);
-
-        this.updated.vertexPosition = false;
-        return result;
+    get index() {
+        if (this.material.points) {
+            return [
+                0, 1, 2, 3, 8, 9, 10, 11
+            ]
+        }
+        if (this.material.wireframe) {
+            return [
+                0, 1, 1, 2, 2, 3, 3, 0,
+                4, 5, 5, 6, 6, 7, 7, 4,
+                8, 9, 9, 10, 10, 11, 11, 8,
+                12, 13, 13, 14, 14, 15, 15, 12,
+                16, 17, 17, 18, 18, 19, 19, 16,
+                20, 21, 21, 22, 22, 23, 23, 20
+            ];
+        }
+        return [
+            0, 1, 2, 2, 3, 0,
+            4, 5, 6, 6, 7, 4,
+            8, 9, 10, 10, 11, 8,
+            12, 13, 14, 14, 15, 12,
+            16, 17, 18, 18, 19, 16,
+            20, 21, 22, 22, 23, 20];
     }
 
     get vertexNormal() {
-        const result = new Float32Array(this.vertexNormalLength * this.vertexCount);
-        let i = 0;
-        do {
-            //front
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
+        return [
+            0, 0, -1,
+            0, 0, -1,
+            0, 0, -1,
+            0, 0, -1,
 
-            //right
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
+            1, 0, 0,
+            1, 0, 0,
+            1, 0, 0,
+            1, 0, 0,
 
-            //top
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            //back
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            //left
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            //bottom
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-            result[i++] = 0;
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
 
-        } while (i < result.length)
+            0, 1, 0,
+            0, 1, 0,
+            0, 1, 0,
+            0, 1, 0,
 
+            -1, 0, 0,
+            -1, 0, 0,
+            -1, 0, 0,
+            -1, 0, 0,
 
-        this.updated.vertexNormal = false;
-        return result;
+            0, -1, 0,
+            0, -1, 0,
+            0, -1, 0,
+            0, -1, 0,
+        ];
     }
 
     get vertexColor() {
-        const color = this.material.color;
-        const result = new Float32Array(this.vertexColorLength * this.vertexCount);
-        let i = 0;
-        do {
-            for (let j = 0; j < this.vertexColorLength; j++) {
-                result[i++] = color[j];
-            }
-        } while (i < result.length);
+        if (this.material.rainbow) {
+            return [
+                0, 0, 0, 1,
+                0, 1, 0, 1,
+                1, 1, 0, 1,
+                1, 0, 0, 1,
 
-        this.updated.vertexColor = false;
-        return result;
+                1, 0, 0, 1,
+                1, 1, 0, 1,
+                1, 1, 1, 1,
+                1, 0, 1, 1,
+
+                1, 0, 1, 1,
+                1, 1, 1, 1,
+                0, 1, 1, 1,
+                0, 0, 1, 1,
+
+                1, 1, 1, 1,
+                1, 1, 0, 1,
+                0, 1, 0, 1,
+                0, 1, 1, 1,
+
+                0, 0, 1, 1,
+                0, 1, 1, 1,
+                0, 1, 0, 1,
+                0, 0, 0, 1,
+
+                0, 0, 1, 1,
+                0, 0, 0, 1,
+                1, 0, 0, 1,
+                1, 0, 1, 1,
+            ];
+        }
+        const color = this.material.color;
+        return [
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+        ];
     }
 
-    get vertexSpectrumColor() {
-        //center the origin
-        const result = new Float32Array(this.vertexColorLength * this.vertexCount);
+    updateVertices(buffer) {
+        const index = buffer.getNodePosition(this);
+        Cube.updateVertices(buffer.data, index, 0, 0, 0, this.width, this.height, this.depth, this.vertexColor);
+    }
+
+    static updateVertices(array, index, x, y, z, width, height, depth, color) {
         let i = 0;
-        do {
-            //front
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
+        const xw = x + width / 2,
+            yh = y + height / 2,
+            zd = z + depth / 2;
+        x -= width / 2;
+        y -= height / 2;
+        z -= depth / 2;
 
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
+        //front
+        index = Geometry3D.updateVertex(array, index, x, y, z, 0, 0, -1, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, yh, z, 0, 0, -1, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, yh, z, 0, 0, -1, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, y, z, 0, 0, -1, color[i++], color[i++], color[i++], color[i++]);
+        //right
+        index = Geometry3D.updateVertex(array, index, xw, y, z, 1, 0, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, yh, z, 1, 0, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, yh, zd, 1, 0, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, y, zd, 1, 0, 0, color[i++], color[i++], color[i++], color[i++]);
+        //back
+        index = Geometry3D.updateVertex(array, index, xw, y, zd, 0, 0, 1, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, yh, zd, 0, 0, 1, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, yh, zd, 0, 0, 1, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, y, zd, 0, 0, 1, color[i++], color[i++], color[i++], color[i++]);
+        //top
+        index = Geometry3D.updateVertex(array, index, xw, yh, zd, 0, 1, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, yh, z, 0, 1, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, yh, z, 0, 1, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, yh, zd, 0, 1, 0, color[i++], color[i++], color[i++], color[i++]);
+        //left
+        index = Geometry3D.updateVertex(array, index, x, y, zd, -1, 0, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, yh, zd, -1, 0, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, yh, z, -1, 0, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, y, z, -1, 0, 0, color[i++], color[i++], color[i++], color[i++]);
+        //bottom
+        index = Geometry3D.updateVertex(array, index, x, y, zd, 0, -1, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, x, y, z, 0, -1, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, y, z, 0, -1, 0, color[i++], color[i++], color[i++], color[i++]);
+        index = Geometry3D.updateVertex(array, index, xw, y, zd, 0, -1, 0, color[i++], color[i++], color[i++], color[i++]);
 
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            //right
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            //top
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            //back
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            //left
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            //bottom
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = 1;
-
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-            result[i++] = 1;
-        } while (i < result.length);
-
-        this.updated.vertexColor = false;
-        return result;
+        return index;
     }
 }

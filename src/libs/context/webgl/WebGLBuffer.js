@@ -1,6 +1,6 @@
 export class WebGLBuffer {
     static binded = null;
-    constructor(gl, type){
+    constructor(/** @type {WebGLRenderingContext} */gl, type){
         this.type = type;
         this.create(gl);
     }

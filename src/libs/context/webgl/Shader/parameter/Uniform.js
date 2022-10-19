@@ -18,32 +18,32 @@ export class Uniform extends Parameter {
         switch (this.type) {
             case 'sampler2D':
             case 'bool':
-                gl.uniform1i(this.location, value);
+                gl.uniform1i(this.location, this.value);
                 return;
             case 'mat2':
-                gl.uniformMatrix2fv(this.location, false, value);
+                gl.uniformMatrix2fv(this.location, false, this.value);
                 return;
             case 'mat3':
-                gl.uniformMatrix3fv(this.location, false, value);
+                gl.uniformMatrix3fv(this.location, false, this.value);
                 return;
             case 'mat4':
-                gl.uniformMatrix4fv(this.location, false, value);
+                gl.uniformMatrix4fv(this.location, false, this.value);
                 return;
             case 'float':
-                if (Array.isArray(value)) {
-                    gl.uniform1fv(this.location, value);
+                if (Array.isArray(this.value)) {
+                    gl.uniform1fv(this.location, this.value);
                 } else {
-                    gl.uniform1f(this.location, value);
+                    gl.uniform1f(this.location, this.value);
                 }
                 return;
             case 'vec2':
-                gl.uniform2fv(this.location, value);
+                gl.uniform2fv(this.location, this.value);
                 return;
             case 'vec3':
-                gl.uniform3fv(this.location, value);
+                gl.uniform3fv(this.location, this.value);
                 return;
             case 'vec4':
-                gl.uniform4fv(this.location, value);
+                gl.uniform4fv(this.location, this.value);
                 return;
             case 'samplerCube':
             default:

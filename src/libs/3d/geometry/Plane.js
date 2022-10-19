@@ -1,99 +1,74 @@
+import { Vector3 } from "../../math/Vector3";
 import { Geometry3D } from "./Geometry3D";
 
 export class Plane extends Geometry3D {
-    constructor(width, height, widthSegment, heightSegment, vertexMode = 'TRIANGLES') {
+    constructor(width, height) {
         super();
         this.width = width || 1;
         this.height = height || 1;
-        this.widthSegment = widthSegment || this.width;
-        this.heightSegment = heightSegment || this.height;
-        this.instanceCount = (this.width / this.widthSegment) * (this.height / this.heightSegment);
+        this.normal = new Vector3(0, 0, -1);
 
-        this.updated.vertexPosition = true;
-        this.updated.vertexNormal = true;
-        this.updated.vertexColor = true;
-
-        this.vertexMode = vertexMode;
+        this.vertexCount = 4;
     }
 
-    get vertexCount() {
-        switch (this.vertexMode) {
-            case 'TRIANGLES':
-            default:
-                return this.instanceCount * 6;
+    get indexLength() {
+        return 4;
+    }
+
+    get vertexMode() {
+        if (this.material.wireframe) {
+            return 'LINE_LOOP';
         }
+        return 'TRIANGLE_STRIP';
     }
 
-    get vertexPosition() {
-        //center the origin
-        const result = new Float32Array(this.vertexPositionLength * this.vertexCount);
-        const z = 0;
-        let i = 0,
-            x = -this.width / 2,
-            y = -this.height / 2;
-        do {
-            const xw = x + this.widthSegment,
-                yh = y + this.heightSegment;
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = yh;
-            result[i++] = z;
-
-            result[i++] = xw;
-            result[i++] = y;
-            result[i++] = z;
-
-            result[i++] = x;
-            result[i++] = y;
-            result[i++] = z;
-
-            x += this.widthSegment;
-            if (x >= this.width / 2) {
-                x = -this.width / 2;
-                y += this.heightSegment;
-            }
-
-        } while (i < result.length);
-
-        this.updated.vertexPosition = false;
-        return result;
-    }
-
-    get vertexNormal() {
-        const result = new Float32Array(this.vertexNormalLength * this.vertexCount);
-        let i = 0;
-        do {
-            result[i++] = 0;
-            result[i++] = 0;
-            result[i++] = -1;
-        } while (i < result.length)
-
-        this.updated.vertexNormal = false;
-        return result;
+    get index() {
+        if (this.material.wireframe) {
+            return [0, 1, 2, 3];
+        }
+        return [3, 0, 2, 1];
     }
 
     get vertexColor() {
+        if (this.material.rainbow) {
+            return [
+                1, 0, 0, 1,
+                0, 1, 0, 1,
+                0, 0, 1, 1,
+                1, 1, 1, 1
+            ];
+        }
         const color = this.material.color;
-        const result = new Float32Array(this.vertexColorLength * this.vertexCount);
-        let i = 0;
-        do {
-            for (let j = 0; j < this.vertexColorLength; j++) {
-                result[i++] = color[j];
-            }
-        } while (i < result.length);
+        return [
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+            color[0], color[1], color[2], color[3],
+        ];
+    }
 
-        this.updated.vertexColor = false;
+    get vertices() {
+        const result = new Float32Array(this.bufferLength);
+        Plane.updateVertices(result, 0, 0, 0, 0, this.width, this.height, 0, this.normal, this.vertexColor);
         return result;
+    }
+
+    updateVertices(buffer) {
+        const index = buffer.getNodePosition(this);
+        Plane.updateVertices(buffer.data, index, 0, 0, 0, this.width, this.height, 0, this.normal, this.vertexColor);
+    }
+
+    static updateVertices(array, index, x, y, z, width, height, depth, normal, color) {
+        let i = index;
+        const xw = x + width / 2,
+            yh = y + height / 2;
+        x -= width / 2;
+        y -= height / 2;
+        Geometry3D.updateVertex(array, index, x, y, z, normal[0], normal[1], normal[2], color[0], color[1], color[2], color[3]);
+        Geometry3D.updateVertex(array, index += 10, x, yh, z, normal[0], normal[1], normal[2], color[4], color[5], color[6], color[7]);
+        Geometry3D.updateVertex(array, index += 10, xw, yh, z, normal[0], normal[1], normal[2], color[8], color[9], color[10], color[11]);
+        Geometry3D.updateVertex(array, index += 10, xw, y, z, normal[0], normal[1], normal[2], color[12], color[13], color[14], color[15]);
+
+        return index;
     }
 }
