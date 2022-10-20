@@ -1,5 +1,5 @@
-import { Vector2 } from "./Vector2";
-import { Vector3 } from "./Vector3";
+import { Vector2 } from './Vector2';
+import { Vector3 } from './Vector3';
 
 export class Vector4  extends Float32Array{
     constructor(x, y, z, w) {

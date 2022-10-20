@@ -1,4 +1,4 @@
-import { Node3D } from "../Node3D";
+import { Node3D } from '../Node3D';
 
 export class Scene extends Node3D{
     constructor(){

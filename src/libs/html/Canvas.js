@@ -1,4 +1,4 @@
-import { HtmlNode } from "./HtmlNode";
+import { HtmlNode } from './HtmlNode';
 
 export class Canvas extends HtmlNode {
     static elementTag = 'canvas';

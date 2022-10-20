@@ -1,4 +1,4 @@
-import { Parameter } from "./Parameter";
+import { Parameter } from './Parameter';
 
 export class Varying extends Parameter{
     constructor(type, name){

@@ -1,5 +1,5 @@
-import { Matrix4 } from "../../math/Matrix4";
-import { Camera } from "./Camera";
+import { Matrix4 } from '../../math/Matrix4';
+import { Camera } from './Camera';
 
 export class PerspectiveCamera extends Camera {
     constructor(fovY, aspect, near, far) {

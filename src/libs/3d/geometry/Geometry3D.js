@@ -1,6 +1,6 @@
-import { Color } from "../../core/Color";
-import { Node } from "../../core/Node";
-import { ColorMaterial } from "../material/ColorMaterial";
+import { Color } from '../../core/Color';
+import { Node } from '../../core/Node';
+import { ColorMaterial } from '../material/ColorMaterial';
 
 export class Geometry3D extends Node {
     static vertexPositionLength = 3;

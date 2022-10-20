@@ -1,9 +1,9 @@
-import { FragmentShader } from "../shader/FragmentShader";
-import { Attribute } from "../shader/parameter/Attribute";
-import { Uniform } from "../shader/parameter/Uniform";
-import { Varying } from "../shader/parameter/Varying";
-import { VertexShader } from "../shader/VertexShader";
-import { WebGLProgram } from "../WebGLProgram";
+import { FragmentShader } from '../shader/FragmentShader';
+import { Attribute } from '../shader/parameter/Attribute';
+import { Uniform } from '../shader/parameter/Uniform';
+import { Varying } from '../shader/parameter/Varying';
+import { VertexShader } from '../shader/VertexShader';
+import { WebGLProgram } from '../WebGLProgram';
 
 export class DefaultProgram extends WebGLProgram {
     constructor(/** @type {WebGLRenderingContext} */gl) {

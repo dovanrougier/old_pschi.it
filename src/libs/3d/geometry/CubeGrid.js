@@ -1,4 +1,4 @@
-import { Geometry3D } from "./Geometry3D";
+import { Geometry3D } from './Geometry3D';
 
 export class CubeGrid extends Geometry3D {
     constructor(width, height, depth, widthSegment, heightSegment, depthSegment) {

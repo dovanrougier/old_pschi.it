@@ -1,12 +1,13 @@
-import { Vector2 } from "../math/Vector2";
-import { Vector3 } from "../math/Vector3";
-import { Vector4 } from "../math/Vector4";
-import { NodeEvent } from "./event/node/NodeEvent";
-import { Node } from "./Node";
+import { Vector2 } from '../math/Vector2';
+import { Vector3 } from '../math/Vector3';
+import { Vector4 } from '../math/Vector4';
+import { NodeEvent } from './event/node/NodeEvent';
+import { Node } from './Node';
 
 export class Buffer extends Node {
-    constructor(index, usage) {
+    constructor(index, usage, type) {
         super();
+        this.type = type;
         this.data = [];
         this.setUsage(usage);
         this.nodes = [];
@@ -150,6 +151,13 @@ export class Buffer extends Node {
         indexBufferUpdated: 'index-buffer-updated',
     }
 
+    static type = {
+        float : 'FLOAT',
+        byte:'UNSIGNED_BYTE',
+        short: 'UNSIGNED_SHORT',
+        int: 'UNSIGNED_INT',
+    }
+
     static usage = {
         staticDraw: 'STATIC_DRAW',
         dynamicDraw: 'DYNAMIC_DRAW',
@@ -205,65 +213,29 @@ export class Buffer extends Node {
     }
 }
 
-export class Int8Buffer extends Buffer {
-    constructor(length, index, usage) {
-        super(index, usage)
-        this.data = new Int8Array(length);
-    }
-}
-
 export class UInt8Buffer extends Buffer {
     constructor(length, index, usage) {
-        super(index, usage)
+        super(index, usage, Buffer.type.byte)
         this.data = new Uint8Array(length);
     }
 }
-
-export class Uint8ClampedBuffer extends Buffer {
-    constructor(length, index, usage) {
-        super(index, usage)
-        this.data = new Uint8ClampedArray(length);
-    }
-}
-
-export class Int16Buffer extends Buffer {
-    constructor(length, index, usage) {
-        super(index, usage)
-        this.data = new Int16Array(length);
-    }
-}
-
 export class UInt16Buffer extends Buffer {
     constructor(length, index, usage) {
-        super(index, usage)
+        super(index, usage, Buffer.type.short)
         this.data = new Uint16Array(length);
     }
 }
 
 export class Uint32Buffer extends Buffer {
     constructor(length, index, usage) {
-        super(index, usage)
+        super(index, usage, Buffer.type.int)
         this.data = new Uint32Array(length);
-    }
-}
-
-export class Float16Buffer extends Buffer {
-    constructor(length, index, usage) {
-        super(index, usage)
-        this.data = new Float16Array(length);
     }
 }
 
 export class Float32Buffer extends Buffer {
     constructor(length, index, usage) {
-        super(index, usage)
+        super(index, usage, Buffer.type.float)
         this.data = new Float32Array(length);
-    }
-}
-
-export class Float64Buffer extends Buffer {
-    constructor(length, index, usage) {
-        super(index, usage);
-        this.data = new Float64Array(length);
     }
 }

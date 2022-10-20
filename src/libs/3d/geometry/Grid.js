@@ -1,5 +1,5 @@
-import { Geometry3D } from "./Geometry3D";
-import { Plane } from "./Plane";
+import { Geometry3D } from './Geometry3D';
+import { Plane } from './Plane';
 
 export class Grid extends Plane {
     constructor(width, height, widthSegment, heightSegment) {

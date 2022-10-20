@@ -1,4 +1,4 @@
-import { WebGLBuffer } from "./WebGLBuffer";
+import { WebGLBuffer } from './WebGLBuffer';
 
 export class WebGLElementBuffer extends WebGLBuffer {
     constructor(/** @type {WebGLRenderingContext} */gl) {

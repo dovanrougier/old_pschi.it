@@ -1,5 +1,5 @@
-import { Vector3 } from "../../math/Vector3";
-import { Geometry3D } from "./Geometry3D";
+import { Vector3 } from '../../math/Vector3';
+import { Geometry3D } from './Geometry3D';
 
 export class Plane extends Geometry3D {
     constructor(width, height) {

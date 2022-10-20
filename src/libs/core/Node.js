@@ -1,6 +1,6 @@
-import { NodeError } from "./error/node/NodeError";
-import { NodeEvent } from "./event/node/NodeEvent";
-import { Uuid } from "./Uuid";
+import { NodeError } from './error/node/NodeError';
+import { NodeEvent } from './event/node/NodeEvent';
+import { Uuid } from './Uuid';
 
 export class Node extends EventTarget {
     constructor() {

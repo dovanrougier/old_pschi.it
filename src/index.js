@@ -15,14 +15,14 @@ window.onresize = (e) => {
     canvas.fitParent();
 };
 
-const canvas = new WebGLCanvas();
+const canvas = new WebGLCanvas(null, { alpha: true });
 HtmlNode.setDocument();
 canvas.appendToBody();
 canvas.fitParent();
 
 const scene = new Scene();
-scene.background = new Color(0.5, 0.5, 0.5);
-scene.fog = new Fog(10, 100, scene.background);
+scene.background = new Color(0, 0, 0);
+scene.fog = new Fog(5, 20, scene.background);
 
 const camera = new PerspectiveCamera(
     45,
@@ -31,30 +31,31 @@ const camera = new PerspectiveCamera(
     1000);
 scene.appendChild(camera);
 
-const ambientLight = new AmbientLight(scene.background);
+const ambientLight = new AmbientLight(new Color(0.2, 0.2, 0.2));
 scene.appendChild(ambientLight);
 
 const pointLight = new DirectionalLight(new Color(1, 1, 1), 1, [0, 5, -5]);
 scene.appendChild(pointLight);
 
-const cube = new Cube();
-const node = new Node3D();
-node.geometry = cube;
-node.translate(0, 0, -5);
-cube.material.rainbow = true;
-cube.material.wireframe = true;
-node.debug = false;
-scene.appendChild(node);
+// const cube = new Cube();
+// const node = new Node3D();
+// node.geometry = cube;
+// node.translate(0, 0, -5);
+// cube.material.rainbow = true;
+// cube.material.wireframe = true;
+// node.debug = false;
+// scene.appendChild(node);
 
-// const cubeGrid = new Cube(2,2,2);
-// const nodeGrid = new Node3D();
-// nodeGrid.geometry = cubeGrid;
-// nodeGrid.translate(-2, 0, -5);
-// cubeGrid.material.rainbow = true;
-// cubeGrid.material.points = false;
-// cubeGrid.material.pointSize = 10;
-// nodeGrid.debug = false;
-// scene.appendChild(nodeGrid);
+const cubeGrid = new CubeGrid(10,10,10);
+const nodeGrid = new Node3D();
+nodeGrid.geometry = cubeGrid;
+nodeGrid.translate(0, 0, -5);
+cubeGrid.material.color = new Color(0.5,0.5,0.5);
+cubeGrid.material.rainbow = true;
+cubeGrid.material.points = false;
+cubeGrid.material.pointSize = 10;
+nodeGrid.debug = false;
+scene.appendChild(nodeGrid);
 
 
 // const plane = new Plane();
@@ -70,8 +71,8 @@ canvas.appendChild(scene);
 requestAnimationFrame(start);
 
 function start(now) {
-    node.rotate(0.01, 1, 1, 1);
-    // nodeGrid.rotate(0.01, 1, 1, 1);
+    // node.rotate(0.01, 1, 1, 1);
+    nodeGrid.rotate(0.01, 1, 1, 1);
     canvas.draw();
     requestAnimationFrame(start);
 }

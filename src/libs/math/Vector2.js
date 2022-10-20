@@ -1,8 +1,8 @@
-import { Matrix2 } from "./Matrix2";
-import { Matrix3 } from "./Matrix3";
-import { Matrix4 } from "./Matrix4";
-import { Vector3 } from "./Vector3";
-import { Vector4 } from "./Vector4";
+import { Matrix2 } from './Matrix2';
+import { Matrix3 } from './Matrix3';
+import { Matrix4 } from './Matrix4';
+import { Vector3 } from './Vector3';
+import { Vector4 } from './Vector4';
 
 export class Vector2 extends Float32Array{
     constructor(x, y) {

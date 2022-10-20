@@ -1,7 +1,7 @@
-import { Matrix3 } from "./Matrix3";
-import { Matrix4 } from "./Matrix4";
-import { Vector2 } from "./Vector2";
-import { Vector4 } from "./Vector4";
+import { Matrix3 } from './Matrix3';
+import { Matrix4 } from './Matrix4';
+import { Vector2 } from './Vector2';
+import { Vector4 } from './Vector4';
 
 
 

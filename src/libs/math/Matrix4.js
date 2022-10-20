@@ -1,5 +1,5 @@
-import { Matrix2 } from "./Matrix2";
-import { Matrix3 } from "./Matrix3";
+import { Matrix2 } from './Matrix2';
+import { Matrix3 } from './Matrix3';
 
 export class Matrix4 extends Float32Array {
     constructor(values) {

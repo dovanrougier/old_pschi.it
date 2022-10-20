@@ -1,5 +1,5 @@
-import { Vector3 } from "../math/Vector3";
-import { Vector4 } from "../math/Vector4";
+import { Vector3 } from '../math/Vector3';
+import { Vector4 } from '../math/Vector4';
 
 export class Color extends Vector4 {
     static length = 4;
