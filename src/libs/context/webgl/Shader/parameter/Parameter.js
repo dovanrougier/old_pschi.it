@@ -9,7 +9,6 @@ export class Parameter{
     }
 
     setValue(gl, value){
-        //console.log(`${this.name}.SetValue(${this.value}) : (${this.type});`);
         throw new Error(`${this.constructor.name} is missing ${this.setValue.name} implementation.`);
     }
 

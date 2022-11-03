@@ -5,9 +5,6 @@ export class Varying extends Parameter{
         super(type, name);
     }
     
-    saveLocation(gl){
-    }
-    
     getDeclaration(){
         return `varying ${this.type} ${this.name};`
     }

@@ -6,9 +6,9 @@ import { Float32Buffer, UInt16Buffer, Uint32Buffer } from '../../../core/Buffer'
 import { Color } from '../../../core/Color';
 import { Node } from '../../../core/Node';
 import { Matrix4 } from '../../../math/Matrix4';
+import { WebGLElementBuffer } from '../buffer/WebGLElementBuffer';
 import { WebGLContext } from '../WebGLContext';
 import { DefaultProgram } from './DefaultProgram';
-import { WebGLElementBuffer } from '../WebGLElementBuffer';
 
 export class DefaultWebGLContext extends WebGLContext {
     constructor(/** @type {WebGLRenderingContext} */ gl) {
